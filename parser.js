@@ -1,15 +1,15 @@
 const dataType = {
-  array: 'Array',
-  object: 'Object',
-  arrayObj: 'Array Object',
-  number: 'Number',
-  string: 'String',
-  null: null
+  array: 'Array Type',
+  object: 'Object Type',
+  arrayObj: 'Array Object Type',
+  number: 'Number Type',
+  string: 'String Type',
+  null: 'Null Type'
 };
 
 const booleanType = {
-  true: true,
-  false: false
+  true: 'Boolean True',
+  false: 'Boolean False'
 }
 
 const ERROR_MSG = {
@@ -63,6 +63,45 @@ function checkBlockError(arrWord) {
   throw new Error(ERROR_MSG.BLOCK_ERROR);
 }
 
+function isBooleanType(value) {
+  return value === 'true' || value === 'false';
+}
+
+function checkValueError(value) {
+  const case1 = /^\D[0-9][a-z].*$/m;
+  const case2 = /^\D[a-z][0-9]['"].*$/m;
+  const case3 = /^\D[:alnum:].*$/m;
+  const case4 = /^\w.*$/m;
+  const case5 = /\w/;
+  return value.match(case5);
+}
+
+function isStringType(value) {
+  return value.match(/^['"].*$/m);
+}
+
+function isNumberType(value) {
+  return value.match(/^(?=.*[0-9]).*$/m);
+}
+
+function checkDataType(value) {
+  if (checkValueError(value)) throw new Error(ERROR_MSG.TOKEN_ERROR + '\n' + "잘못된 토큰값:" + value);
+
+  if (isStringType(value)) {
+    return new DataStructure(dataType.string, value.substring(1, value.length - 1));
+
+  } else if (isNumberType(value)) {
+    return new DataStructure(dataType.number, value);
+
+  } else if (isBooleanType(value)) {
+    if (value === 'true') return new DataStructure(booleanType.true, true);
+    else return new DataStructure(booleanType.false, false);
+
+  } else {
+    return new DataStructure(dataType.null, null);
+  }
+}
+
 function isCommaOrCloseBrackets(value) {
   return isCloseBrackets(value) || value === ',';
 }
@@ -75,37 +114,6 @@ function isOpenBrackets(value) {
 function isCloseBrackets(value) {
   const closeBrackets = [']'];
   return closeBrackets.indexOf(value) > -1;
-}
-
-function isBooleanType(value) {
-  return value === 'true' || value === 'false';
-}
-
-function isStringType(value) {
-  if (value.match(/^['"].*$/m)) return true;
-  // if (value.match(/^(?=.*\')(?=.*[a-z])(?=.*\').*$/m) && !isBooleanType(value)) {
-  //   throw new Error(ERROR_MSG.TOKEN_ERROR) + value;
-  // } else {
-  //   return true;
-  // }
-}
-
-function isNumberType(value) {
-  return value.match(/^(?=.*[0-9]).*$/m)
-}
-
-function checkDataType(value) {
-  console.log(value.match(/^['"].*$/m))
-  if (isStringType(value)) {
-    return new DataStructure(dataType.string, value.substring(1, value.length - 1));
-  } else if (isBooleanType(value)) {
-    if (value === 'true') return new DataStructure(booleanType.true, value);
-    else return new DataStructure(booleanType.false, value);
-  } else if (isNumberType(value)) {
-    return new DataStructure(dataType.number, value);
-  } else if (value === 'null') {
-    return new DataStructure(dataType.null, value);
-  }
 }
 
 // parsing 기능
@@ -162,6 +170,8 @@ const errorcase4 = '[[[p, []]]';
 const errorcase5 = "['1a3',[null,false,['11',[112233],112],55, '99'],33, true]";
 const errorcase6 = "['1a'3',[22,23,[11,[112233],112],55],33]";
 const errorcase7 = "['1a3',[22,23,[11,[112233],112],55],3d3]";
+const errorcase8 = "['a13',[22,23,[11,[112233],112],55],33d]";
+const errorcase9 = "['13',[22,23,[11,[112233],112],55],33d]";
 
 
 // const test1 = parsingObj(testcase1);
@@ -182,7 +192,8 @@ const errorcase7 = "['1a3',[22,23,[11,[112233],112],55],3d3]";
 
 // const test13 = parsingObj(testcase13);
 // const test14 = parsingObj(testcase14);
-const test15 = parsingObj(testcase15);
+// const test15 = parsingObj(testcase15);
+
 
 // const errorTest1 = parsingObj(errorcase1); // BLOCK ERROR
 // const errorTest2 = parsingObj(errorcase2); // BLOCK ERROR
@@ -191,6 +202,10 @@ const test15 = parsingObj(testcase15);
 
 // const errorTest5 = parsingObj(errorcase5); // TOKEN ERROR
 // const errorTest6 = parsingObj(errorcase6); // TOKEN ERROR
-// const errorTest7 = parsingObj(errorcase7); // TOKEN ERROR
+const errorTest7 = parsingObj(errorcase7); // TOKEN ERROR
+// const errorTest8 = parsingObj(errorcase8); // TOKEN ERROR fail
+// const errorTest9 = parsingObj(errorcase9); // TOKEN ERROR fail
 
-console.log(JSON.stringify(test15, null, 2));
+
+// console.log(JSON.stringify(test15, null, 2));
+// console.log(JSON.stringify(errorTest5, null, 2));
