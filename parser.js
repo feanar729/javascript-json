@@ -1,11 +1,3 @@
-/*
-  1. 중첩된 괄호가 비어있거나 부족한 괄호가 있으면 에러를 출력 올바르면 true가 반환되어 stackData 함수 실행
-  2. 괄호가 발견되면 Stack Class에 DataStructure Class에 객체를 Stack에 쌓는다
-  3. ','와 ']' 괄호가 조건이 되고 temp 변수에 데이터가 있다면,
-      stack의 마지막 데이터의 child에 데이터와 데이터 타입 객체를 push 하고 초기화 
-  4. ']' 괄호가 조건이 되면 stack의 마지막 데이터를 pop하고 마지막 stack에 있는 child에 push 반복
-*/
-
 const dataType = {
   array: 'Array',
   object: 'Object',
@@ -15,9 +7,15 @@ const dataType = {
   null: null
 };
 
+const booleanType = {
+  true: true,
+  false: false
+}
+
 const ERROR_MSG = {
   BLOCK_ERROR: 'BLOCK ERROR',
-  TYPE_ERROR: 'TYPE ERROR'
+  TYPE_ERROR: 'TYPE ERROR',
+  TOKEN_ERROR: '올바른 토큰값이 아닙니다.'
 };
 
 class DataStructure {
@@ -65,14 +63,13 @@ function checkBlockError(arrWord) {
   throw new Error(ERROR_MSG.BLOCK_ERROR);
 }
 
+function isCommaOrCloseBrackets(value) {
+  return isCloseBrackets(value) || value === ',';
+}
+
 function isOpenBrackets(value) {
   const openBrackets = ['['];
   return openBrackets.indexOf(value) > -1;
-}
-
-function isCommaOrCloseBrackets(value) {
-  const closeBrackets = [']'];
-  return closeBrackets.indexOf(value) > -1 || value === ',';
 }
 
 function isCloseBrackets(value) {
@@ -80,18 +77,47 @@ function isCloseBrackets(value) {
   return closeBrackets.indexOf(value) > -1;
 }
 
+function isBooleanType(value) {
+  return value === 'true' || value === 'false';
+}
+
+function isStringType(value) {
+  if (value.match(/^['"].*$/m)) return true;
+  // if (value.match(/^(?=.*\')(?=.*[a-z])(?=.*\').*$/m) && !isBooleanType(value)) {
+  //   throw new Error(ERROR_MSG.TOKEN_ERROR) + value;
+  // } else {
+  //   return true;
+  // }
+}
+
+function isNumberType(value) {
+  return value.match(/^(?=.*[0-9]).*$/m)
+}
+
+function checkDataType(value) {
+  console.log(value.match(/^['"].*$/m))
+  if (isStringType(value)) {
+    return new DataStructure(dataType.string, value.substring(1, value.length - 1));
+  } else if (isBooleanType(value)) {
+    if (value === 'true') return new DataStructure(booleanType.true, value);
+    else return new DataStructure(booleanType.false, value);
+  } else if (isNumberType(value)) {
+    return new DataStructure(dataType.number, value);
+  } else if (value === 'null') {
+    return new DataStructure(dataType.null, value);
+  }
+}
+
 // parsing 기능
 function stackData(strData) {
   const stack = new Stack();
   let temp = '';
 
-  for (let key in strData) {
-    const value = strData[key];
-
+  for (let value of strData) {
     if (isOpenBrackets(value)) {
       stack.addData(new DataStructure(dataType.array, dataType.arrayObj));
     } else if (isCommaOrCloseBrackets(value)) {
-      temp ? stack.pushChild(new DataStructure(dataType.number, temp)) : null;
+      temp ? stack.pushChild(checkDataType(temp)) : null;
       temp = '';
       if (isCloseBrackets(value)) temp = stack.pushChild(stack.popData());
     } else {
@@ -104,7 +130,7 @@ function stackData(strData) {
 function parsingObj(strData) {
   const checkError = checkBlockError(strData);
 
-  if (checkError === true) {
+  if (checkError) {
     const parsingResult = {
       type: dataType.array,
       child: stackData(strData)
@@ -127,35 +153,44 @@ const testcase11 = '[[[[1,[],2]],[]]]';
 const testcase12 = '[1, [[2]]]';
 const testcase13 = '[123,[22,23,[11,[112233],112],55],33]';
 const testcase14 = '[[[[12]]]]';
-
+const testcase15 = "['123',[null,false,['11',[112233],112],55, '99'],33, true]";
 
 const errorcase1 = '[3213, 2';
 const errorcase2 = ']3213, 2[';
 const errorcase3 = '[1, 55, 3]]';
 const errorcase4 = '[[[p, []]]';
+const errorcase5 = "['1a3',[null,false,['11',[112233],112],55, '99'],33, true]";
+const errorcase6 = "['1a'3',[22,23,[11,[112233],112],55],33]";
+const errorcase7 = "['1a3',[22,23,[11,[112233],112],55],3d3]";
 
-const test1 = parsingObj(testcase1);
-const test2 = parsingObj(testcase2);
-const test3 = parsingObj(testcase3);
 
-const test4 = parsingObj(testcase4);
-const test5 = parsingObj(testcase5);
-const test6 = parsingObj(testcase6);
+// const test1 = parsingObj(testcase1);
+// const test2 = parsingObj(testcase2);
+// const test3 = parsingObj(testcase3);
 
-const test7 = parsingObj(testcase7);
-const test8 = parsingObj(testcase8);
-const test9 = parsingObj(testcase9);
+// const test4 = parsingObj(testcase4);
+// const test5 = parsingObj(testcase5);
+// const test6 = parsingObj(testcase6);
 
-const test10 = parsingObj(testcase10);
-const test11 = parsingObj(testcase11);
-const test12 = parsingObj(testcase12);
+// const test7 = parsingObj(testcase7);
+// const test8 = parsingObj(testcase8);
+// const test9 = parsingObj(testcase9);
 
-const test13 = parsingObj(testcase13);
-const test14 = parsingObj(testcase14);
+// const test10 = parsingObj(testcase10);
+// const test11 = parsingObj(testcase11);
+// const test12 = parsingObj(testcase12);
 
-// const errorTest1 = parsingObj(errorcase1);
-// const errorTest2 = parsingObj(errorcase2);
-// const errorTest3 = parsingObj(errorcase3);
-// const errorTest4 = parsingObj(errorcase4);
+// const test13 = parsingObj(testcase13);
+// const test14 = parsingObj(testcase14);
+const test15 = parsingObj(testcase15);
 
-console.log(JSON.stringify(test14, null, 2));
+// const errorTest1 = parsingObj(errorcase1); // BLOCK ERROR
+// const errorTest2 = parsingObj(errorcase2); // BLOCK ERROR
+// const errorTest3 = parsingObj(errorcase3); // BLOCK ERROR
+// const errorTest4 = parsingObj(errorcase4); // BLOCK ERROR
+
+// const errorTest5 = parsingObj(errorcase5); // TOKEN ERROR
+// const errorTest6 = parsingObj(errorcase6); // TOKEN ERROR
+// const errorTest7 = parsingObj(errorcase7); // TOKEN ERROR
+
+console.log(JSON.stringify(test15, null, 2));
