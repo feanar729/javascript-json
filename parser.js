@@ -15,7 +15,8 @@ const booleanType = {
 const ERROR_MSG = {
   BLOCK_ERROR: 'BLOCK ERROR',
   TYPE_ERROR: 'TYPE ERROR',
-  TOKEN_ERROR: '올바른 토큰값이 아닙니다.'
+  TYPE_ERROR: '알 수 없는 타입입니다.',
+  COMMA_ERROR: '올바른 문자열이 아닙니다.'
 };
 
 class DataStructure {
@@ -47,46 +48,59 @@ class Stack {
 }
 
 function checkBlockError(arrWord) {
-  let BracketPoint = 0;
+  let bracketPoint = 0;
   const splitWord = arrWord.split('');
+  const matchOpenCase = ['['];
+  const matchCloseCase = [']'];
 
-  splitWord.forEach(matchBrackets => {
-    if (matchBrackets === '[') BracketPoint++;
-    if (matchBrackets === ']') {
-      if (BracketPoint === 0) throw new Error(ERROR_MSG.BLOCK_ERROR);
-      BracketPoint--;
+  // const commaPoint = checkCommaError(splitWord);
+
+  splitWord.forEach(matchCase => {
+    if (matchOpenCase.indexOf(matchCase) > -1) bracketPoint++;
+    else if (matchCloseCase.indexOf(matchCase) > -1) {
+      if (bracketPoint === 0) throw new Error(ERROR_MSG.BLOCK_ERROR);
+      bracketPoint--;
     }
   });
-  if (BracketPoint === 0) {
-    return true;
-  }
+  if (bracketPoint === 0) return true;
   throw new Error(ERROR_MSG.BLOCK_ERROR);
+}
+
+function checkNumberError(value) {
+  if (value.match(/[0-9]\D|\D[0-9]/)) throw new Error(ERROR_MSG.TYPE_ERROR + "\nERROR_VALUE: " + value);
+}
+
+function checkCommaError(value) {
+  if (value.match(/['"]/m)) {
+    let commaPoint = 0;
+    const delComma = value.substring(1, value.length - 1);
+    const splitToken = delComma.split('');
+    const matchCommaCase = ['"', "'"];
+
+    splitToken.forEach(matchCase => {
+      if (matchCommaCase.indexOf(matchCase) > -1) commaPoint++;
+      else if (matchCommaCase.indexOf(matchCase) > -1) commaPoint--;
+    });
+    if (commaPoint % 2 !== 0) throw new Error(ERROR_MSG.TYPE_ERROR + "\nERROR_VALUE: " + value);
+  }
 }
 
 function isBooleanType(value) {
   return value === 'true' || value === 'false';
 }
 
-function checkValueError(value) {
-  const case1 = /^\D[0-9][a-z].*$/m;
-  const case2 = /^\D[a-z][0-9]['"].*$/m;
-  const case3 = /^\D[:alnum:].*$/m;
-  const case4 = /^\w.*$/m;
-  const case5 = /\w/;
-  return value.match(case5);
-}
-
 function isStringType(value) {
+  checkCommaError(value);
   return value.match(/^['"].*$/m);
 }
 
 function isNumberType(value) {
+  checkNumberError(value);
   return value.match(/^(?=.*[0-9]).*$/m);
 }
 
 function checkDataType(value) {
-  if (checkValueError(value)) throw new Error(ERROR_MSG.TOKEN_ERROR + '\n' + "잘못된 토큰값:" + value);
-
+  // 해당 아랫 부분 class 'DataType'으로 class화
   if (isStringType(value)) {
     return new DataStructure(dataType.string, value.substring(1, value.length - 1));
 
@@ -136,9 +150,9 @@ function stackData(strData) {
 }
 
 function parsingObj(strData) {
-  const checkError = checkBlockError(strData);
+  const isError = checkBlockError(strData);
 
-  if (checkError) {
+  if (isError) {
     const parsingResult = {
       type: dataType.array,
       child: stackData(strData)
@@ -167,11 +181,11 @@ const errorcase1 = '[3213, 2';
 const errorcase2 = ']3213, 2[';
 const errorcase3 = '[1, 55, 3]]';
 const errorcase4 = '[[[p, []]]';
-const errorcase5 = "['1a3',[null,false,['11',[112233],112],55, '99'],33, true]";
-const errorcase6 = "['1a'3',[22,23,[11,[112233],112],55],33]";
+const errorcase5 = "['a13',[22,23,[11,[112233],112],55],33d]";
+const errorcase6 = '["1a"3",[22,23,[11,[112233],112],55],33]';
 const errorcase7 = "['1a3',[22,23,[11,[112233],112],55],3d3]";
-const errorcase8 = "['a13',[22,23,[11,[112233],112],55],33d]";
-const errorcase9 = "['13',[22,23,[11,[112233],112],55],33d]";
+const errorcase8 = "['1a3',[22,23,[11,[112233],112],55],d35]";
+const errorcase9 = '["1a"a"a"s""3",[22,23,[11,[112233],112],55],33]';
 
 
 // const test1 = parsingObj(testcase1);
@@ -192,7 +206,7 @@ const errorcase9 = "['13',[22,23,[11,[112233],112],55],33d]";
 
 // const test13 = parsingObj(testcase13);
 // const test14 = parsingObj(testcase14);
-// const test15 = parsingObj(testcase15);
+const test15 = parsingObj(testcase15);
 
 
 // const errorTest1 = parsingObj(errorcase1); // BLOCK ERROR
@@ -200,12 +214,10 @@ const errorcase9 = "['13',[22,23,[11,[112233],112],55],33d]";
 // const errorTest3 = parsingObj(errorcase3); // BLOCK ERROR
 // const errorTest4 = parsingObj(errorcase4); // BLOCK ERROR
 
-// const errorTest5 = parsingObj(errorcase5); // TOKEN ERROR
-// const errorTest6 = parsingObj(errorcase6); // TOKEN ERROR
-const errorTest7 = parsingObj(errorcase7); // TOKEN ERROR
-// const errorTest8 = parsingObj(errorcase8); // TOKEN ERROR fail
-// const errorTest9 = parsingObj(errorcase9); // TOKEN ERROR fail
+// const errorTest5 = parsingObj(errorcase5); // TOKEN ERROR => 33d
+// const errorTest6 = parsingObj(errorcase6); // TOKEN ERROR => '1a'3'
+// const errorTest7 = parsingObj(errorcase7); // TOKEN ERROR => 3d3
+// const errorTest8 = parsingObj(errorcase8); // TOKEN ERROR => d35
+// const errorTest9 = parsingObj(errorcase9); // TOKEN ERROR => "1a"a"a"s""3"
 
-
-// console.log(JSON.stringify(test15, null, 2));
-// console.log(JSON.stringify(errorTest5, null, 2));
+console.log(JSON.stringify(test15, null, 2));
