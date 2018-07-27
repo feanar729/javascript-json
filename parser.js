@@ -14,7 +14,6 @@ const booleanType = {
 
 const ERROR_MSG = {
   BLOCK_ERROR: 'BLOCK ERROR',
-  TYPE_ERROR: 'TYPE ERROR',
   TYPE_ERROR: '알 수 없는 타입입니다.',
   COMMA_ERROR: '올바른 문자열이 아닙니다.'
 };
@@ -53,8 +52,6 @@ function checkBlockError(arrWord) {
   const matchOpenCase = ['['];
   const matchCloseCase = [']'];
 
-  // const commaPoint = checkCommaError(splitWord);
-
   splitWord.forEach(matchCase => {
     if (matchOpenCase.indexOf(matchCase) > -1) bracketPoint++;
     else if (matchCloseCase.indexOf(matchCase) > -1) {
@@ -81,7 +78,7 @@ function checkCommaError(value) {
       if (matchCommaCase.indexOf(matchCase) > -1) commaPoint++;
       else if (matchCommaCase.indexOf(matchCase) > -1) commaPoint--;
     });
-    if (commaPoint % 2 !== 0) throw new Error(ERROR_MSG.TYPE_ERROR + "\nERROR_VALUE: " + value);
+    if (commaPoint % 2 !== 0) throw new Error(ERROR_MSG.COMMA_ERROR + "\nERROR_VALUE: " + value);
   }
 }
 
@@ -100,7 +97,7 @@ function isNumberType(value) {
 }
 
 function checkDataType(value) {
-  // 해당 아랫 부분 class 'DataType'으로 class화
+  // 해당 함수를 'CheckDataType'으로 class화 할 수 있는가...?
   if (isStringType(value)) {
     return new DataStructure(dataType.string, value.substring(1, value.length - 1));
 
@@ -214,10 +211,10 @@ const test15 = parsingObj(testcase15);
 // const errorTest3 = parsingObj(errorcase3); // BLOCK ERROR
 // const errorTest4 = parsingObj(errorcase4); // BLOCK ERROR
 
-// const errorTest5 = parsingObj(errorcase5); // TOKEN ERROR => 33d
-// const errorTest6 = parsingObj(errorcase6); // TOKEN ERROR => '1a'3'
-// const errorTest7 = parsingObj(errorcase7); // TOKEN ERROR => 3d3
-// const errorTest8 = parsingObj(errorcase8); // TOKEN ERROR => d35
-// const errorTest9 = parsingObj(errorcase9); // TOKEN ERROR => "1a"a"a"s""3"
+// const errorTest5 = parsingObj(errorcase5); // TYPE ERROR => 33d
+// const errorTest6 = parsingObj(errorcase6); // COMMA ERROR => '1a'3'
+// const errorTest7 = parsingObj(errorcase7); // TYPE ERROR => 3d3
+// const errorTest8 = parsingObj(errorcase8); // TYPE ERROR => d35
+// const errorTest9 = parsingObj(errorcase9); // COMMA ERROR => "1a"a"a"s""3"
 
 console.log(JSON.stringify(test15, null, 2));
