@@ -19,8 +19,9 @@ const ERROR_MSG = {
 };
 
 class DataStructure {
-  constructor(type, value) {
+  constructor(type, value, key) {
     this.type = type;
+    this.key = key;
     this.value = value;
     this.child = [];
   }
@@ -46,11 +47,11 @@ class Stack {
   }
 }
 
-function checkBlockError(arrWord) {
+function checkBlockError(value) {
   let bracketPoint = 0;
-  const splitWord = arrWord.split('');
-  const matchOpenCase = ['['];
-  const matchCloseCase = [']'];
+  const splitWord = value.split('');
+  const matchOpenCase = ['[', '{'];
+  const matchCloseCase = [']', '}'];
 
   splitWord.forEach(matchCase => {
     if (matchOpenCase.indexOf(matchCase) > -1) bracketPoint++;
@@ -96,9 +97,24 @@ function isNumberType(value) {
   return value.match(/^(?=.*[0-9]).*$/m);
 }
 
-function checkDataType(value) {
-  // 해당 함수를 'CheckDataType'으로 class화 할 수 있는가...?
-  if (isStringType(value)) {
+function isObjectType(value) {
+  return value.match(/\{/);
+}
+
+function isArrayType(value) {
+  return value.match(/\[/);
+}
+
+function checkDataType(value, temp) {
+  if (isArrayType(value)) {
+    return new DataStructure(dataType.array, dataType.arrayObj);
+
+  } else if (isObjectType(value)) {
+    if (temp) return new DataStructure(dataType.object, temp);
+    const test = value.split(':');
+    return new DataStructure(dataType.object, test[1], test[0]);
+
+  } else if (isStringType(value)) {
     return new DataStructure(dataType.string, value.substring(1, value.length - 1));
 
   } else if (isNumberType(value)) {
@@ -113,17 +129,50 @@ function checkDataType(value) {
   }
 }
 
+class CheckDataType {
+  isArrayType(value) {
+    if (value.match(/\[/)) return new DataStructure(dataType.array, dataType.arrayObj);
+  }
+
+  isObjectType(value) {
+    if (value.match(/\{/)) {
+      if (temp) return new DataStructure(dataType.object, temp);
+      const test = value.split(':');
+      return new DataStructure(dataType.object, test[1], test[0]);
+    }
+  }
+
+  isStringType(value) {
+    checkCommaError(value);
+    if (value.match(/^['"].*$/m)) return new DataStructure(dataType.string, value.substring(1, value.length - 1));
+  }
+
+  isNumberType(value) {
+    checkNumberError(value);
+    if (value.match(/^(?=.*[0-9]).*$/m)) return new DataStructure(dataType.number, value);
+  }
+
+  isBooleanType(value) {
+    if (value === 'true') return new DataStructure(booleanType.true, true);
+    else return new DataStructure(booleanType.false, false);
+  }
+
+  isNullType(value) {
+    if (value === 'null') return new DataStructure(dataType.null, null);
+  }
+}
+
 function isCommaOrCloseBrackets(value) {
   return isCloseBrackets(value) || value === ',';
 }
 
 function isOpenBrackets(value) {
-  const openBrackets = ['['];
+  const openBrackets = ['[', '{'];
   return openBrackets.indexOf(value) > -1;
 }
 
 function isCloseBrackets(value) {
-  const closeBrackets = [']'];
+  const closeBrackets = [']', '}'];
   return closeBrackets.indexOf(value) > -1;
 }
 
@@ -134,7 +183,7 @@ function stackData(strData) {
 
   for (let value of strData) {
     if (isOpenBrackets(value)) {
-      stack.addData(new DataStructure(dataType.array, dataType.arrayObj));
+      stack.addData(checkDataType(value, temp));
     } else if (isCommaOrCloseBrackets(value)) {
       temp ? stack.pushChild(checkDataType(temp)) : null;
       temp = '';
@@ -158,21 +207,15 @@ function parsingObj(strData) {
   }
 }
 
-const testcase1 = '[11, 22,[3,41, 5]]';
-const testcase2 = '[12, [14, 55], 15]';
-const testcase3 = '[1, [55, [3]],[]]';
-const testcase4 = '[1,3,[1,21,[2, 4324,[543, 432]]],324,[51,63],7]';
-const testcase5 = '[[1123, 354445324328103829,[1, 2, [3],4,5,6]],[1,2],4,[5,6]]';
-const testcase6 = '12345';
-const testcase7 = '[[[]]]';
-const testcase8 = '[[],[],4,[6,5,87],[78]]';
-const testcase9 = '[[1],[[2],3]]';
-const testcase10 = '[11, [22], 33]';
-const testcase11 = '[[[[1,[],2]],[]]]';
-const testcase12 = '[1, [[2]]]';
-const testcase13 = '[123,[22,23,[11,[112233],112],55],33]';
-const testcase14 = '[[[[12]]]]';
-const testcase15 = "['123',[null,false,['11',[112233],112],55, '99'],33, true]";
+const testcase1 = '12345';
+const testcase2 = '[[[]]]';
+const testcase3 = '[[],[],4,[6,5,87],[78]]';
+const testcase4 = '[[1],[[2],3]]';
+const testcase5 = '[11, [22], 33]';
+const testcase6 = '[[[[1,[],2]],[]]]';
+const testcase7 = "['123',[null,false,['11',[112233],112],55, '99'],33, true]";
+const testcase8 = "['1a3',[null,false,['11',[112233],{easy : ['hello', {a:'a'}, 'world']},112],55, '99'],{a:'str', b:[912,[5656,33],{key : 'innervalue', newkeys: [1,2,3,4,5]}]}, true]";
+const testcase9 = "[1 ,[[12, {key:[1, {inKey:2, secondKey: 3},'world']}], 12],'2']";
 
 const errorcase1 = '[3213, 2';
 const errorcase2 = ']3213, 2[';
@@ -183,27 +226,6 @@ const errorcase6 = '["1a"3",[22,23,[11,[112233],112],55],33]';
 const errorcase7 = "['1a3',[22,23,[11,[112233],112],55],3d3]";
 const errorcase8 = "['1a3',[22,23,[11,[112233],112],55],d35]";
 const errorcase9 = '["1a"a"a"s""3",[22,23,[11,[112233],112],55],33]';
-
-
-// const test1 = parsingObj(testcase1);
-// const test2 = parsingObj(testcase2);
-// const test3 = parsingObj(testcase3);
-
-// const test4 = parsingObj(testcase4);
-// const test5 = parsingObj(testcase5);
-// const test6 = parsingObj(testcase6);
-
-// const test7 = parsingObj(testcase7);
-// const test8 = parsingObj(testcase8);
-// const test9 = parsingObj(testcase9);
-
-// const test10 = parsingObj(testcase10);
-// const test11 = parsingObj(testcase11);
-// const test12 = parsingObj(testcase12);
-
-// const test13 = parsingObj(testcase13);
-// const test14 = parsingObj(testcase14);
-const test15 = parsingObj(testcase15);
 
 
 // const errorTest1 = parsingObj(errorcase1); // BLOCK ERROR
@@ -217,4 +239,5 @@ const test15 = parsingObj(testcase15);
 // const errorTest8 = parsingObj(errorcase8); // TYPE ERROR => d35
 // const errorTest9 = parsingObj(errorcase9); // COMMA ERROR => "1a"a"a"s""3"
 
-console.log(JSON.stringify(test15, null, 2));
+const result = parsingObj(testcase9);
+console.log(JSON.stringify(result, null, 2));
