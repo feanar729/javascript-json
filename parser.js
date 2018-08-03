@@ -48,39 +48,41 @@ class Stack {
   }
 }
 
-function checkBlockError(arrWord) {
-  let bracketPoint = 0;
-  const splitWord = arrWord.split('');
-  const matchOpenCase = ['['];
-  const matchCloseCase = [']'];
 
-  splitWord.forEach(matchCase => {
-    if (matchOpenCase.indexOf(matchCase) > -1) bracketPoint++;
-    else if (matchCloseCase.indexOf(matchCase) > -1) {
-      if (bracketPoint === 0) throw new Error(ERROR_MSG.BLOCK_ERROR);
-      bracketPoint--;
-    }
-  });
-  if (bracketPoint === 0) return true;
-  throw new Error(ERROR_MSG.BLOCK_ERROR);
-}
+class CheckError {
+  checkBlockError(arrWord) {
+    let bracketPoint = 0;
+    const splitWord = arrWord.split('');
+    const matchOpenCase = ['['];
+    const matchCloseCase = [']'];
 
-function checkNumberError(temp) {
-  if (temp.match(/[0-9]\D|\D[0-9]/)) throw new Error(ERROR_MSG.TYPE_ERROR + "\nERROR_VALUE: " + temp);
-}
-
-function checkCommaError(temp) {
-  if (temp.match(/['"]/m)) {
-    let commaPoint = 0;
-    const delComma = temp.substring(1, temp.length - 1);
-    const splitToken = delComma.split('');
-    const matchCommaCase = ['"', "'"];
-
-    splitToken.forEach(matchCase => {
-      if (matchCommaCase.indexOf(matchCase) > -1) commaPoint++;
-      else if (matchCommaCase.indexOf(matchCase) > -1) commaPoint--;
+    splitWord.forEach(matchCase => {
+      if (matchOpenCase.indexOf(matchCase) > -1) bracketPoint++;
+      else if (matchCloseCase.indexOf(matchCase) > -1) {
+        if (bracketPoint === 0) throw new Error(ERROR_MSG.BLOCK_ERROR);
+        bracketPoint--;
+      }
     });
-    if (commaPoint % 2 !== 0) throw new Error(ERROR_MSG.COMMA_ERROR + "\nERROR_VALUE: " + temp);
+    if (bracketPoint === 0) return true;
+    throw new Error(ERROR_MSG.BLOCK_ERROR);
+  }
+
+  checkNumberError(temp) {
+    if (temp.match(/[0-9]\D|\D[0-9]/)) throw new Error(ERROR_MSG.TYPE_ERROR + "\nERROR_VALUE: " + temp);
+  }
+
+  checkCommaError(temp) {
+    if (temp.match(/['"]/m)) {
+      let commaPoint = 0;
+      const splitToken = temp.split('');
+      const matchCommaCase = ['"', "'"];
+
+      splitToken.forEach(matchCase => {
+        if (matchCommaCase.indexOf(matchCase) > -1) commaPoint++;
+        else if (matchCommaCase.indexOf(matchCase) > -1) commaPoint--;
+      });
+      if (commaPoint % 2 !== 0) throw new Error(ERROR_MSG.COMMA_ERROR + "\nERROR_VALUE: " + temp);
+    }
   }
 }
 
@@ -89,12 +91,14 @@ function isBooleanType(temp) {
 }
 
 function isStringType(temp) {
-  checkCommaError(temp);
+  const error = new CheckError();
+  error.checkCommaError(temp);
   return temp.match(/^['"].*$/m);
 }
 
 function isNumberType(temp) {
-  checkNumberError(temp);
+  const error = new CheckError();
+  error.checkNumberError(temp);
   return temp.match(/^(?=.*[0-9]).*$/m);
 }
 
@@ -160,7 +164,8 @@ function stackData(strData) {
 }
 
 function parsingObj(strData) {
-  const isError = checkBlockError(strData);
+  const error = new CheckError();
+  const isError = error.checkBlockError(strData);
 
   if (isError) {
     const parsingResult = {
@@ -180,7 +185,7 @@ const testcase6 = '[[[[1,[],2]],[]]]';
 const testcase7 = "['123',[null,false,['11',[112233],112],55, '99'],33, true]";
 const testcase8 = "['1a3',[null,false,['11',[112233],{easy : ['hello', {a:'a'}, 'world']},112],55, '99'],{a:'str', b:[912,[5656,33],{key : 'innervalue', newkeys: [1,2,3,4,5]}]}, true]";
 const testcase9 = "[1 ,[[12, {keyName:[1, {firstKey:2, secondKey: 3},'world']}], 12],'2']";
-const testcase10 = "[1,[[2, {keyName:[1, {inKey:2}, 'test']}], null], true]";
+const testcase10 = "[1,[[2, {keyName:[1, {inKey:22}, 'test']}], null], true]";
 
 const errorcase1 = '[3213, 2';
 const errorcase2 = ']3213, 2[';
@@ -204,5 +209,5 @@ const errorcase9 = '["1a"a"a"s""3",[22,23,[11,[112233],112],55],33]';
 // const errorTest8 = parsingObj(errorcase8); // TYPE ERROR => d35
 // const errorTest9 = parsingObj(errorcase9); // COMMA ERROR => "1a"a"a"s""3"
 
-const result = parsingObj(testcase8);
+const result = parsingObj(testcase10);
 console.log(JSON.stringify(result, null, 2));
