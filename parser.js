@@ -1,6 +1,7 @@
 const dataType = {
   array: 'Array Type',
   object: 'Object Type',
+  objectKey: 'Object Key',
   arrayObj: 'Array Object Type',
   number: 'Number Type',
   string: 'String Type',
@@ -47,11 +48,11 @@ class Stack {
   }
 }
 
-function checkBlockError(value) {
+function checkBlockError(arrWord) {
   let bracketPoint = 0;
-  const splitWord = value.split('');
-  const matchOpenCase = ['[', '{'];
-  const matchCloseCase = [']', '}'];
+  const splitWord = arrWord.split('');
+  const matchOpenCase = ['['];
+  const matchCloseCase = [']'];
 
   splitWord.forEach(matchCase => {
     if (matchOpenCase.indexOf(matchCase) > -1) bracketPoint++;
@@ -64,14 +65,14 @@ function checkBlockError(value) {
   throw new Error(ERROR_MSG.BLOCK_ERROR);
 }
 
-function checkNumberError(value) {
-  if (value.match(/[0-9]\D|\D[0-9]/)) throw new Error(ERROR_MSG.TYPE_ERROR + "\nERROR_VALUE: " + value);
+function checkNumberError(temp) {
+  if (temp.match(/[0-9]\D|\D[0-9]/)) throw new Error(ERROR_MSG.TYPE_ERROR + "\nERROR_VALUE: " + temp);
 }
 
-function checkCommaError(value) {
-  if (value.match(/['"]/m)) {
+function checkCommaError(temp) {
+  if (temp.match(/['"]/m)) {
     let commaPoint = 0;
-    const delComma = value.substring(1, value.length - 1);
+    const delComma = temp.substring(1, temp.length - 1);
     const splitToken = delComma.split('');
     const matchCommaCase = ['"', "'"];
 
@@ -79,49 +80,40 @@ function checkCommaError(value) {
       if (matchCommaCase.indexOf(matchCase) > -1) commaPoint++;
       else if (matchCommaCase.indexOf(matchCase) > -1) commaPoint--;
     });
-    if (commaPoint % 2 !== 0) throw new Error(ERROR_MSG.COMMA_ERROR + "\nERROR_VALUE: " + value);
+    if (commaPoint % 2 !== 0) throw new Error(ERROR_MSG.COMMA_ERROR + "\nERROR_VALUE: " + temp);
   }
 }
 
-function isBooleanType(value) {
-  return value === 'true' || value === 'false';
+function isBooleanType(temp) {
+  return temp === 'true' || temp === 'false';
 }
 
-function isStringType(value) {
-  checkCommaError(value);
-  return value.match(/^['"].*$/m);
+function isStringType(temp) {
+  checkCommaError(temp);
+  return temp.match(/^['"].*$/m);
 }
 
-function isNumberType(value) {
-  checkNumberError(value);
-  return value.match(/^(?=.*[0-9]).*$/m);
+function isNumberType(temp) {
+  checkNumberError(temp);
+  return temp.match(/^(?=.*[0-9]).*$/m);
 }
 
-function isObjectType(value) {
-  return value.match(/\{/);
-}
-
-function isArrayType(value) {
-  return value.match(/\[/);
+function isObjectType(value, temp) {
+  return temp.match(/^[a-zA-Z]*$/m) && value === ':';
 }
 
 function checkDataType(value, temp) {
-  if (isArrayType(value)) {
-    return new DataStructure(dataType.array, dataType.arrayObj);
+  if (isObjectType(value, temp)) {
+    return new DataStructure(dataType.objectKey, undefined, temp);
 
-  } else if (isObjectType(value)) {
-    if (temp) return new DataStructure(dataType.object, temp);
-    const test = value.split(':');
-    return new DataStructure(dataType.object, test[1], test[0]);
+  } else if (isStringType(temp)) {
+    return new DataStructure(dataType.string, temp.substring(1, temp.length - 1));
 
-  } else if (isStringType(value)) {
-    return new DataStructure(dataType.string, value.substring(1, value.length - 1));
+  } else if (isNumberType(temp)) {
+    return new DataStructure(dataType.number, temp);
 
-  } else if (isNumberType(value)) {
-    return new DataStructure(dataType.number, value);
-
-  } else if (isBooleanType(value)) {
-    if (value === 'true') return new DataStructure(booleanType.true, true);
+  } else if (isBooleanType(temp)) {
+    if (temp === 'true') return new DataStructure(booleanType.true, true);
     else return new DataStructure(booleanType.false, false);
 
   } else {
@@ -129,41 +121,13 @@ function checkDataType(value, temp) {
   }
 }
 
-class CheckDataType {
-  isArrayType(value) {
-    if (value.match(/\[/)) return new DataStructure(dataType.array, dataType.arrayObj);
-  }
-
-  isObjectType(value) {
-    if (value.match(/\{/)) {
-      if (temp) return new DataStructure(dataType.object, temp);
-      const test = value.split(':');
-      return new DataStructure(dataType.object, test[1], test[0]);
-    }
-  }
-
-  isStringType(value) {
-    checkCommaError(value);
-    if (value.match(/^['"].*$/m)) return new DataStructure(dataType.string, value.substring(1, value.length - 1));
-  }
-
-  isNumberType(value) {
-    checkNumberError(value);
-    if (value.match(/^(?=.*[0-9]).*$/m)) return new DataStructure(dataType.number, value);
-  }
-
-  isBooleanType(value) {
-    if (value === 'true') return new DataStructure(booleanType.true, true);
-    else return new DataStructure(booleanType.false, false);
-  }
-
-  isNullType(value) {
-    if (value === 'null') return new DataStructure(dataType.null, null);
-  }
+function isArrayOrObjectType(value) {
+  if (value.match(/\[/)) return new DataStructure(dataType.array, dataType.arrayObj)
+  else if (value.match(/\{/)) return new DataStructure(dataType.object);
 }
 
-function isCommaOrCloseBrackets(value) {
-  return isCloseBrackets(value) || value === ',';
+function isCommaOrCloseOrColonBrackets(value) {
+  return isCloseBrackets(value) || value === ',' || value === ':';
 }
 
 function isOpenBrackets(value) {
@@ -183,9 +147,9 @@ function stackData(strData) {
 
   for (let value of strData) {
     if (isOpenBrackets(value)) {
-      stack.addData(checkDataType(value, temp));
-    } else if (isCommaOrCloseBrackets(value)) {
-      temp ? stack.pushChild(checkDataType(temp)) : null;
+      stack.addData(isArrayOrObjectType(value));
+    } else if (isCommaOrCloseOrColonBrackets(value)) {
+      temp ? stack.pushChild(checkDataType(value, temp)) : null;
       temp = '';
       if (isCloseBrackets(value)) temp = stack.pushChild(stack.popData());
     } else {
@@ -215,7 +179,8 @@ const testcase5 = '[11, [22], 33]';
 const testcase6 = '[[[[1,[],2]],[]]]';
 const testcase7 = "['123',[null,false,['11',[112233],112],55, '99'],33, true]";
 const testcase8 = "['1a3',[null,false,['11',[112233],{easy : ['hello', {a:'a'}, 'world']},112],55, '99'],{a:'str', b:[912,[5656,33],{key : 'innervalue', newkeys: [1,2,3,4,5]}]}, true]";
-const testcase9 = "[1 ,[[12, {key:[1, {inKey:2, secondKey: 3},'world']}], 12],'2']";
+const testcase9 = "[1 ,[[12, {keyName:[1, {firstKey:2, secondKey: 3},'world']}], 12],'2']";
+const testcase10 = "[1,[[2, {keyName:[1, {inKey:2}, 'test']}], null], true]";
 
 const errorcase1 = '[3213, 2';
 const errorcase2 = ']3213, 2[';
@@ -239,5 +204,5 @@ const errorcase9 = '["1a"a"a"s""3",[22,23,[11,[112233],112],55],33]';
 // const errorTest8 = parsingObj(errorcase8); // TYPE ERROR => d35
 // const errorTest9 = parsingObj(errorcase9); // COMMA ERROR => "1a"a"a"s""3"
 
-const result = parsingObj(testcase9);
+const result = parsingObj(testcase8);
 console.log(JSON.stringify(result, null, 2));
