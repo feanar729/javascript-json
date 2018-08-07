@@ -84,6 +84,10 @@ class CheckError {
       if (commaPoint % 2 !== 0) throw new Error(ERROR_MSG.COMMA_ERROR + "\nERROR_VALUE: " + temp);
     }
   }
+
+  checkObjectError(temp) {
+    if (/['".&^%$#@!*()]/m.test(temp)) throw new Error(ERROR_MSG.TYPE_ERROR + "\nERROR_VALUE: " + temp);
+  }
 }
 
 class CheckDataType {
@@ -91,9 +95,9 @@ class CheckDataType {
     this.error = new CheckError();
   }
   getDataType(value, temp) {
-    if (this.isObjectType(value, temp)) return new DataStructure(dataType.objectKey, undefined, temp);
-    if (this.isStringType(temp)) return new DataStructure(dataType.string, temp.substring(1, temp.length - 1));
-    if (this.isNumberType(temp)) return new DataStructure(dataType.number, temp);
+    if (this.isObjectType(value, temp)) return new DataStructure(dataType.object, undefined, temp.trim());
+    if (this.isStringType(temp)) return new DataStructure(dataType.string, temp.trim());
+    if (this.isNumberType(temp)) return new DataStructure(dataType.number, temp.trim());
     if (this.isBooleanType(temp)) {
       if (temp === 'true') return new DataStructure(booleanType.true, true);
       else return new DataStructure(booleanType.false, false);
@@ -102,9 +106,10 @@ class CheckDataType {
     }
   }
 
-  isArrayOrObjectType(value) {
+  isArrayOrObjectType(value, temp) {
     if (value.match(/\[/)) return new DataStructure(dataType.array, dataType.arrayObj)
-    else if (value.match(/\{/)) return new DataStructure(dataType.object);
+    else if (/\{/m.test(value)) return new DataStructure(dataType.object, undefined, value.substring(1, value.length - 1).trim());
+    else if (value.match(/\:/)) return new DataStructure(dataType.object, undefined, temp.substring(0, temp.length - 1));
   }
 
   isBooleanType(temp) {
@@ -113,25 +118,28 @@ class CheckDataType {
 
   isStringType(temp) {
     this.error.checkCommaError(temp);
-    return temp.match(/^['"].*$/m);
+    return temp.match(/[\'|\"]/m);
   }
 
   isNumberType(temp) {
     this.error.checkNumberError(temp);
-    return temp.match(/^(?=.*[0-9]).*$/m);
+    return /^(?=.*[0-9]).*$/m.test(temp);
   }
 
   isObjectType(value, temp) {
-    return temp.match(/^[a-zA-Z]*$/m) && value === ':';
+    if (value === ':') {
+      this.error.checkObjectError(temp)
+      return temp.match(/^[\{a-zA-Z]*$/m);
+    }
   }
 }
 
 function isCommaOrCloseOrColonBrackets(value) {
-  return isCloseBrackets(value) || value === ',' || value === ':';
+  return isCloseBrackets(value) || value === ',';
 }
 
-function isOpenBrackets(value) {
-  const openBrackets = ['[', '{'];
+function isOpenBracketsOrObject(value) {
+  const openBrackets = ['[', /\{/, /\:/];
   return openBrackets.indexOf(value) > -1;
 }
 
@@ -147,17 +155,49 @@ function stackData(strData) {
   let temp = '';
 
   for (let value of strData) {
-    if (isOpenBrackets(value)) {
-      stack.addData(checkType.isArrayOrObjectType(value));
+    if (isOpenBracketsOrObject(value)) {
+      stack.addData(checkType.isArrayOrObjectType(value, temp));
+      temp = '';
     } else if (isCommaOrCloseOrColonBrackets(value)) {
       temp ? stack.pushChild(checkType.getDataType(value, temp)) : null;
       temp = '';
       if (isCloseBrackets(value)) temp = stack.pushChild(stack.popData());
     } else {
-      temp = temp + value.trim();
+      // console.log(temp)
+      // temp = temp + value.trim();
+      temp = temp + value;
     }
   }
   return temp;
+}
+
+function getTokenizer(data) {
+  const tokenArr = [];
+  let token = '';
+  let isStrComma = false;
+
+  for (value of data) {
+    if (isStrComma) {
+      if (value === "'") isStrComma = !isStrComma;
+      token += value;
+    } else if (value === ',') {
+      tokenArr.push(token.trim());
+      token = '';
+    } else if (value === '[' || value === ':') {
+      token += value;
+      tokenArr.push(token.trim());
+      token = '';
+    } else if (value === ']' || value === '}') {
+      tokenArr.push(token.trim());
+      token = '';
+      token += value;
+    } else {
+      if (value === "'") isStrComma = !isStrComma;
+      token += value;
+    }
+  }
+  tokenArr.push(token.trim());
+  return tokenArr;
 }
 
 function parsingObj(strData) {
@@ -165,6 +205,7 @@ function parsingObj(strData) {
   const isError = error.checkBlockError(strData);
 
   if (isError) {
+    const filterData = getTokenizer(strData);
     const parsingResult = {
       type: dataType.array,
       child: stackData(strData)
@@ -183,6 +224,9 @@ const testcase7 = "['123',[null,false,['11',[112233],112],55, '99'],33, true]";
 const testcase8 = "['1a3',[null,false,['11',[112233],{easy : ['hello', {a:'a'}, 'world']},112],55, '99'],{a:'str', b:[912,[5656,33],{key : 'innervalue', newkeys: [1,2,3,4,5]}]}, true]";
 const testcase9 = "[1 ,[[12, {keyName:[1, {firstKey:2, secondKey: 3},'world']}], 12],'2']";
 const testcase10 = "[1,[[2, {keyName:[1, {inKey:22}, 'test']}], null], true]";
+const testcase11 = "[{name: '[ 1 ]'}]";
+const testcase12 = "[{'name': 'c r o n           g '}]";
+
 
 const errorcase1 = '[3213, 2';
 const errorcase2 = ']3213, 2[';
@@ -206,5 +250,9 @@ const errorcase9 = '["1a"a"a"s""3",[22,23,[11,[112233],112],55],33]';
 // const errorTest8 = parsingObj(errorcase8); // TYPE ERROR => d35
 // const errorTest9 = parsingObj(errorcase9); // COMMA ERROR => "1a"a"a"s""3"
 
-const result = parsingObj(testcase8);
-console.log(JSON.stringify(result, null, 2));
+
+// const result = parsingObj(testcase11);
+// console.log(JSON.stringify(result, null, 2));
+
+const testFilter = getTokenizer(testcase11);
+console.log(JSON.stringify(testFilter, null, 2));
