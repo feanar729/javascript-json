@@ -94,31 +94,32 @@ class CheckDataType {
   constructor() {
     this.error = new CheckError();
   }
-  getDataType(value, temp) {
-    if (this.isObjectType(value, temp)) return new DataStructure(dataType.object, undefined, temp.trim());
-    if (this.isStringType(temp)) return new DataStructure(dataType.string, temp.trim());
-    if (this.isNumberType(temp)) return new DataStructure(dataType.number, temp.trim());
-    if (this.isBooleanType(temp)) {
-      if (temp === 'true') return new DataStructure(booleanType.true, true);
+  getDataType(value) {
+    if (this.isStringType(value)) return new DataStructure(dataType.string, value.trim());
+    if (this.isNumberType(value)) return new DataStructure(dataType.number, value.trim());
+    if (this.isBooleanType(value)) {
+      if (value === 'true') return new DataStructure(booleanType.true, true);
       else return new DataStructure(booleanType.false, false);
     } else {
       return new DataStructure(dataType.null, null)
     }
   }
 
-  isArrayOrObjectType(value, temp) {
-    if (value.match(/\[/)) return new DataStructure(dataType.array, dataType.arrayObj)
+  isArrayOrObjectType(value) {
+    this.error.checkObjectError(value);
+    if (value === '[') return new DataStructure(dataType.array, dataType.arrayObj)
     else if (/\{/m.test(value)) return new DataStructure(dataType.object, undefined, value.substring(1, value.length - 1).trim());
-    else if (value.match(/\:/)) return new DataStructure(dataType.object, undefined, temp.substring(0, temp.length - 1));
+    else if (value.match(/\:/)) return new DataStructure(dataType.object, undefined, value.substring(0, value.length - 1));
   }
 
   isBooleanType(temp) {
     return temp === 'true' || temp === 'false';
   }
 
-  isStringType(temp) {
-    this.error.checkCommaError(temp);
-    return temp.match(/[\'|\"]/m);
+  isStringType(value) {
+    this.error.checkCommaError(value);
+    return /[\'|\"]/.test(value);
+    // return value.match(/[\'|\"]/);
   }
 
   isNumberType(temp) {
@@ -139,8 +140,10 @@ function isCommaOrCloseOrColonBrackets(value) {
 }
 
 function isOpenBracketsOrObject(value) {
-  const openBrackets = ['[', /\{/, /\:/];
-  return openBrackets.indexOf(value) > -1;
+  if (!/['"]/.test(value)) {
+    const openBrackets = ['['];
+    return openBrackets.indexOf(value) > -1 || /([{a-zA-Z:])|([a-zA-Z:])/.test(value);
+  }
 }
 
 function isCloseBrackets(value) {
@@ -156,18 +159,14 @@ function stackData(strData) {
 
   for (let value of strData) {
     if (isOpenBracketsOrObject(value)) {
-      stack.addData(checkType.isArrayOrObjectType(value, temp));
-      temp = '';
-    } else if (isCommaOrCloseOrColonBrackets(value)) {
-      temp ? stack.pushChild(checkType.getDataType(value, temp)) : null;
-      temp = '';
-      if (isCloseBrackets(value)) temp = stack.pushChild(stack.popData());
+      temp = stack.addData(checkType.isArrayOrObjectType(value));
+    } else if (isCloseBrackets(value)) {
+      temp = stack.pushChild(stack.popData());
     } else {
-      // console.log(temp)
-      // temp = temp + value.trim();
-      temp = temp + value;
+      temp = stack.pushChild(checkType.getDataType(value));
     }
   }
+  temp ? temp : temp = stack;
   return temp;
 }
 
@@ -208,7 +207,7 @@ function parsingObj(strData) {
     const filterData = getTokenizer(strData);
     const parsingResult = {
       type: dataType.array,
-      child: stackData(strData)
+      child: stackData(filterData)
     };
     return parsingResult;
   }
@@ -223,9 +222,9 @@ const testcase6 = '[[[[1,[],2]],[]]]';
 const testcase7 = "['123',[null,false,['11',[112233],112],55, '99'],33, true]";
 const testcase8 = "['1a3',[null,false,['11',[112233],{easy : ['hello', {a:'a'}, 'world']},112],55, '99'],{a:'str', b:[912,[5656,33],{key : 'innervalue', newkeys: [1,2,3,4,5]}]}, true]";
 const testcase9 = "[1 ,[[12, {keyName:[1, {firstKey:2, secondKey: 3},'world']}], 12],'2']";
-const testcase10 = "[1,[[2, {keyName:[1, {inKey:22}, 'test']}], null], true]";
+const testcase10 = "[1,[[2, {inKey:[1, {firstKey:11, secondKey:'tes13@'}, 'test']}], null], true]";
 const testcase11 = "[{name: '[ 1 ]'}]";
-const testcase12 = "[{'name': 'c r o n           g '}]";
+const testcase12 = "[{name: 'c r o n           g '}]";
 
 
 const errorcase1 = '[3213, 2';
@@ -251,8 +250,8 @@ const errorcase9 = '["1a"a"a"s""3",[22,23,[11,[112233],112],55],33]';
 // const errorTest9 = parsingObj(errorcase9); // COMMA ERROR => "1a"a"a"s""3"
 
 
-// const result = parsingObj(testcase11);
-// console.log(JSON.stringify(result, null, 2));
+const result = parsingObj(testcase11);
+console.log(JSON.stringify(result, null, 2));
 
-const testFilter = getTokenizer(testcase11);
-console.log(JSON.stringify(testFilter, null, 2));
+// const testFilter = getTokenizer(testcase12);
+// console.log(JSON.stringify(testFilter, null, 2));
