@@ -71,21 +71,21 @@ class CheckError {
     if (temp.match(/[0-9]\D|\D[0-9]/)) throw new Error(ERROR_MSG.TYPE_ERROR + "\nERROR_VALUE: " + temp);
   }
 
-  checkCommaError(temp) {
-    if (temp.match(/['"]/m)) {
+  checkCommaError(value) {
+    if (value.match(/['"]/m)) {
       let commaPoint = 0;
-      const splitToken = temp.split('');
+      const splitToken = value.split('');
       const matchCommaCase = ['"', "'"];
 
       splitToken.forEach(matchCase => {
         if (matchCommaCase.indexOf(matchCase) > -1) commaPoint++;
         else if (matchCommaCase.indexOf(matchCase) > -1) commaPoint--;
       });
-      if (commaPoint % 2 !== 0) throw new Error(ERROR_MSG.COMMA_ERROR + "\nERROR_VALUE: " + temp);
+      if (commaPoint % 2 !== 0) throw new Error(ERROR_MSG.COMMA_ERROR + "\nERROR_VALUE: " + value);
     }
   }
 
-  checkObjectError(temp) {
+  checkObjKeyError(temp) {
     if (/['".&^%$#@!*()]/m.test(temp)) throw new Error(ERROR_MSG.TYPE_ERROR + "\nERROR_VALUE: " + temp);
   }
 }
@@ -94,7 +94,8 @@ class CheckDataType {
   constructor() {
     this.error = new CheckError();
   }
-  getDataType(value) {
+  getDataType(value, stack) {
+    if (this.isObjKeyValueType(value)) return this.getObjKeyValType(value, stack);
     if (this.isStringType(value)) return new DataStructure(dataType.string, value.trim());
     if (this.isNumberType(value)) return new DataStructure(dataType.number, value.trim());
     if (this.isBooleanType(value)) {
@@ -106,10 +107,24 @@ class CheckDataType {
   }
 
   isArrayOrObjectType(value) {
-    this.error.checkObjectError(value);
+    this.error.checkObjKeyError(value);
     if (value === '[') return new DataStructure(dataType.array, dataType.arrayObj)
-    else if (/\{/m.test(value)) return new DataStructure(dataType.object, undefined, value.substring(1, value.length - 1).trim());
-    else if (value.match(/\:/)) return new DataStructure(dataType.object, undefined, value.substring(0, value.length - 1));
+    else if (value === '{') return new DataStructure(dataType.object);
+  }
+
+  // value가 기본자료형 인가? 아닌가(Arr, Obj Type)?
+  getObjKeyValType(value, stack) {
+    const divideKeyValue = value.split(':');
+    const objKey = divideKeyValue[0].trim();
+    const objValue = divideKeyValue[1].trim();
+    this.error.checkObjKeyError(objKey)
+    if (objValue === '[' || objValue === '{') {
+      if (objValue === '[') stack.addData(new DataStructure(dataType.array, dataType.arrayObj, objKey.trim()));
+      else stack.addData(new DataStructure(dataType.object, undefined, objKey.trim()));
+    } else {
+      stack.addData(new DataStructure(undefined, this.getDataType(objValue.trim()), objKey.trim()));
+      stack.pushChild(stack.popData());
+    }
   }
 
   isBooleanType(temp) {
@@ -119,7 +134,6 @@ class CheckDataType {
   isStringType(value) {
     this.error.checkCommaError(value);
     return /[\'|\"]/.test(value);
-    // return value.match(/[\'|\"]/);
   }
 
   isNumberType(temp) {
@@ -127,22 +141,16 @@ class CheckDataType {
     return /^(?=.*[0-9]).*$/m.test(temp);
   }
 
-  isObjectType(value, temp) {
-    if (value === ':') {
-      this.error.checkObjectError(temp)
-      return temp.match(/^[\{a-zA-Z]*$/m);
-    }
+  isObjKeyValueType(value) {
+    return /[:]/m.test(value);
   }
 }
 
-function isCommaOrCloseOrColonBrackets(value) {
-  return isCloseBrackets(value) || value === ',';
-}
-
-function isOpenBracketsOrObject(value) {
+// Class 안에 매서드로 넣기 and parsing 기능 포함
+function isOpenBrackets(value) {
   if (!/['"]/.test(value)) {
-    const openBrackets = ['['];
-    return openBrackets.indexOf(value) > -1 || /([{a-zA-Z:])|([a-zA-Z:])/.test(value);
+    const openBrackets = ['[', '{'];
+    return openBrackets.indexOf(value) > -1;
   }
 }
 
@@ -158,15 +166,16 @@ function stackData(strData) {
   let temp = '';
 
   for (let value of strData) {
-    if (isOpenBracketsOrObject(value)) {
-      temp = stack.addData(checkType.isArrayOrObjectType(value));
+    // console.log("value:" + value);
+    if (isOpenBrackets(value)) {
+      stack.addData(checkType.isArrayOrObjectType(value));
     } else if (isCloseBrackets(value)) {
-      temp = stack.pushChild(stack.popData());
+      temp = stack.pushChild(stack.popData())
     } else {
-      temp = stack.pushChild(checkType.getDataType(value));
+      let getData = checkType.getDataType(value, stack);
+      if (getData) temp = stack.pushChild(getData); // 조건문 넣은 이유: getData에서 return 되는 값이 undefined로 반환 되는 경우가 있었다
     }
   }
-  temp ? temp : temp = stack;
   return temp;
 }
 
@@ -182,7 +191,7 @@ function getTokenizer(data) {
     } else if (value === ',') {
       tokenArr.push(token.trim());
       token = '';
-    } else if (value === '[' || value === ':') {
+    } else if (value === '[' || value === '{') {
       token += value;
       tokenArr.push(token.trim());
       token = '';
@@ -221,11 +230,13 @@ const testcase5 = '[11, [22], 33]';
 const testcase6 = '[[[[1,[],2]],[]]]';
 const testcase7 = "['123',[null,false,['11',[112233],112],55, '99'],33, true]";
 const testcase8 = "['1a3',[null,false,['11',[112233],{easy : ['hello', {a:'a'}, 'world']},112],55, '99'],{a:'str', b:[912,[5656,33],{key : 'innervalue', newkeys: [1,2,3,4,5]}]}, true]";
-const testcase9 = "[1 ,[[12, {keyName:[1, {firstKey:2, secondKey: 3},'world']}], 12],'2']";
+const testcase9 = "[[[12, {keyName:[1, {firstKey:2, secondKey: 3},'world']}], 12],'2']";
 const testcase10 = "[1,[[2, {inKey:[1, {firstKey:11, secondKey:'tes13@'}, 'test']}], null], true]";
-const testcase11 = "[{name: '[ 1 ]'}]";
-const testcase12 = "[{name: 'c r o n           g '}]";
+const testcase11 = "[1,[2,[{name: '[ 1 ]', this: 1}]]]";
+const testcase12 = "[[[1,{name: 'c r o n           g '}]]]";
 
+const testcase13 = "[1,[[1,{name: 'c r o n           g ', live: 'seoul', firstKey:[1,2,3]}]]]";
+const testcase14 = "[1,[[1,{name: 'c r o n           g ', live: 'seoul', firstKey:{first:1,second:2, third:3} }]]]";
 
 const errorcase1 = '[3213, 2';
 const errorcase2 = ']3213, 2[';
@@ -249,9 +260,8 @@ const errorcase9 = '["1a"a"a"s""3",[22,23,[11,[112233],112],55],33]';
 // const errorTest8 = parsingObj(errorcase8); // TYPE ERROR => d35
 // const errorTest9 = parsingObj(errorcase9); // COMMA ERROR => "1a"a"a"s""3"
 
-
-const result = parsingObj(testcase11);
+const result = parsingObj(testcase8);
 console.log(JSON.stringify(result, null, 2));
 
-// const testFilter = getTokenizer(testcase12);
+// const testFilter = getTokenizer(testcase8);
 // console.log(JSON.stringify(testFilter, null, 2));
