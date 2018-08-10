@@ -1,21 +1,6 @@
 const getTokenizer = require('./tokenizer.js').getTokenizer;
-// const Square = require('./square.js');
 const checkDataError = require('./error.js').CheckError;
-
-const dataType = {
-  array: 'Array Type',
-  object: 'Object Type',
-  objectKey: 'Object Key',
-  arrayObj: 'Array Object Type',
-  number: 'Number Type',
-  string: 'String Type',
-  null: 'Null Type'
-};
-
-const booleanType = {
-  true: 'Boolean True',
-  false: 'Boolean False'
-}
+const checkDataType = require('./checkDataType').CheckDataType;
 
 class Stack {
   constructor() {
@@ -37,82 +22,6 @@ class Stack {
   }
 }
 
-class DataStructure {
-  constructor(type, value, key) {
-    this.type = type;
-    this.key = key;
-    this.value = value;
-    this.child = [];
-  }
-}
-
-class CheckDataType {
-  constructor() {
-    this.error = new checkDataError();
-  }
-  getDataType(value, stack) {
-    if (this.isObjKeyValueType(value)) return this.getObjKeyValType(value, stack);
-    if (this.isStringType(value)) return new DataStructure(dataType.string, value.trim());
-    if (this.isNumberType(value)) return new DataStructure(dataType.number, value.trim());
-    if (this.isBooleanType(value)) {
-      if (value === 'true') return new DataStructure(booleanType.true, true);
-      else return new DataStructure(booleanType.false, false);
-    } else {
-      return new DataStructure(dataType.null, null)
-    }
-  }
-
-  checkPrimitiveDataType(value) {
-    if (this.isStringType(value)) return dataType.string;
-    if (this.isNumberType(value)) return dataType.number;
-    if (this.isBooleanType(value)) {
-      if (value === 'true') return booleanType.true;
-      else return booleanType.false;
-    } else {
-      return dataType.null;
-    }
-  }
-
-  isArrayOrObjectType(value) {
-    this.error.checkObjKeyError(value);
-    if (value === '[') return new DataStructure(dataType.array, dataType.arrayObj)
-    else if (value === '{') return new DataStructure(dataType.object);
-  }
-
-  // value가 기본자료형 인가? 아닌가(Arr, Obj Type)?
-  getObjKeyValType(value, stack) {
-    const divideKeyValue = value.split(':');
-    const objKey = divideKeyValue[0].trim();
-    const objValue = divideKeyValue[1].trim();
-    this.error.checkObjKeyError(objKey)
-    if (objValue === '[' || objValue === '{') {
-      if (objValue === '[') stack.addData(new DataStructure(dataType.array, dataType.arrayObj, objKey));
-      else stack.addData(new DataStructure(dataType.object, undefined, objKey));
-    } else {
-      stack.addData(new DataStructure(this.checkPrimitiveDataType(objValue), objValue, objKey));
-      stack.pushChild(stack.popData());
-    }
-  }
-
-  isBooleanType(temp) {
-    return temp === 'true' || temp === 'false';
-  }
-
-  isStringType(value) {
-    this.error.checkCommaError(value);
-    return /[\'|\"]/.test(value);
-  }
-
-  isNumberType(temp) {
-    this.error.checkNumberError(temp);
-    return /^(?=.*[0-9]).*$/m.test(temp);
-  }
-
-  isObjKeyValueType(value) {
-    return /[:]/m.test(value);
-  }
-}
-
 class Parser {
   isOpenBrackets(value) {
     if (!/['"]/.test(value)) {
@@ -126,12 +35,12 @@ class Parser {
     return closeBrackets.indexOf(value) > -1;
   }
 
-  stackData(strData) {
-    const checkType = new CheckDataType();
+  stackData(tokenData) {
+    const checkType = new checkDataType();
     const stack = new Stack();
     let temp = '';
 
-    for (let value of strData) {
+    for (let value of tokenData) {
       if (this.isOpenBrackets(value)) {
         stack.addData(checkType.isArrayOrObjectType(value));
       } else if (this.isCloseBrackets(value)) {
@@ -151,7 +60,7 @@ class Parser {
     if (isError) {
       const tokenData = getTokenizer(strData);
       const parsingResult = {
-        type: dataType.array,
+        type: 'Array Type',
         child: this.stackData(tokenData)
       };
       return parsingResult;
@@ -199,5 +108,5 @@ const errorcase9 = '["1a"a"a"s""3",[22,23,[11,[112233],112],55],33]';
 // const errorTest9 = parsingObj(errorcase9); // COMMA ERROR => "1a"a"a"s""3"
 
 const parser = new Parser();
-const result = parser.parsingObj(testcase9)
+const result = parser.parsingObj(testcase1)
 console.log(JSON.stringify(result, null, 2));
