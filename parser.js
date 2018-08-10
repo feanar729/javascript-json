@@ -106,7 +106,8 @@ const errorcase9 = '["1a"a"a"s""3",[22,23,[11,[112233],112],55],33]';
 // const errorTest7 = parsingObj(errorcase7); // TYPE ERROR => 3d3
 // const errorTest8 = parsingObj(errorcase8); // TYPE ERROR => d35
 // const errorTest9 = parsingObj(errorcase9); // COMMA ERROR => "1a"a"a"s""3"
+// const errorcase10 = "[[[1,{'name': 'c r o n           g '}]]]"; TYPE ERROR => 'name'
 
 const parser = new Parser();
-const result = parser.parsingObj(testcase8)
+const result = parser.parsingObj(errorcase10)
 console.log(JSON.stringify(result, null, 2));
