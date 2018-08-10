@@ -108,5 +108,5 @@ const errorcase9 = '["1a"a"a"s""3",[22,23,[11,[112233],112],55],33]';
 // const errorTest9 = parsingObj(errorcase9); // COMMA ERROR => "1a"a"a"s""3"
 
 const parser = new Parser();
-const result = parser.parsingObj(testcase1)
+const result = parser.parsingObj(testcase8)
 console.log(JSON.stringify(result, null, 2));

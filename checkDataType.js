@@ -35,7 +35,7 @@ exports.CheckDataType = class CheckDataType {
     if (this.isBooleanType(value)) {
       if (value === 'true') return new DataStructure(booleanType.true, true);
       else return new DataStructure(booleanType.false, false);
-    } else {
+    } else if (value === 'null') {
       return new DataStructure(dataType.null, null)
     }
   }
