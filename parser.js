@@ -1,3 +1,5 @@
+const getTokenizer = require('./tokenizer.js').getTokenizer;
+
 const dataType = {
   array: 'Array Type',
   object: 'Object Type',
@@ -19,15 +21,6 @@ const ERROR_MSG = {
   COMMA_ERROR: '올바른 문자열이 아닙니다.'
 };
 
-class DataStructure {
-  constructor(type, value, key) {
-    this.type = type;
-    this.key = key;
-    this.value = value;
-    this.child = [];
-  }
-}
-
 class Stack {
   constructor() {
     this.stack = [];
@@ -47,7 +40,6 @@ class Stack {
     lastDataStructure.child.push(child);
   }
 }
-
 
 class CheckError {
   checkBlockError(arrWord) {
@@ -90,6 +82,15 @@ class CheckError {
   }
 }
 
+class DataStructure {
+  constructor(type, value, key) {
+    this.type = type;
+    this.key = key;
+    this.value = value;
+    this.child = [];
+  }
+}
+
 class CheckDataType {
   constructor() {
     this.error = new CheckError();
@@ -106,6 +107,17 @@ class CheckDataType {
     }
   }
 
+  checkPrimitiveDataType(value) {
+    if (this.isStringType(value)) return dataType.string;
+    if (this.isNumberType(value)) return dataType.number;
+    if (this.isBooleanType(value)) {
+      if (value === 'true') return booleanType.true;
+      else return booleanType.false;
+    } else {
+      return dataType.null;
+    }
+  }
+
   isArrayOrObjectType(value) {
     this.error.checkObjKeyError(value);
     if (value === '[') return new DataStructure(dataType.array, dataType.arrayObj)
@@ -119,10 +131,10 @@ class CheckDataType {
     const objValue = divideKeyValue[1].trim();
     this.error.checkObjKeyError(objKey)
     if (objValue === '[' || objValue === '{') {
-      if (objValue === '[') stack.addData(new DataStructure(dataType.array, dataType.arrayObj, objKey.trim()));
-      else stack.addData(new DataStructure(dataType.object, undefined, objKey.trim()));
+      if (objValue === '[') stack.addData(new DataStructure(dataType.array, dataType.arrayObj, objKey));
+      else stack.addData(new DataStructure(dataType.object, undefined, objKey));
     } else {
-      stack.addData(new DataStructure(undefined, this.getDataType(objValue.trim()), objKey.trim()));
+      stack.addData(new DataStructure(this.checkPrimitiveDataType(objValue), objValue, objKey));
       stack.pushChild(stack.popData());
     }
   }
@@ -146,81 +158,52 @@ class CheckDataType {
   }
 }
 
-// Class 안에 매서드로 넣기 and parsing 기능 포함
-function isOpenBrackets(value) {
-  if (!/['"]/.test(value)) {
-    const openBrackets = ['[', '{'];
-    return openBrackets.indexOf(value) > -1;
-  }
-}
-
-function isCloseBrackets(value) {
-  const closeBrackets = [']', '}'];
-  return closeBrackets.indexOf(value) > -1;
-}
-
-// parsing 기능
-function stackData(strData) {
-  const checkType = new CheckDataType();
-  const stack = new Stack();
-  let temp = '';
-
-  for (let value of strData) {
-    // console.log("value:" + value);
-    if (isOpenBrackets(value)) {
-      stack.addData(checkType.isArrayOrObjectType(value));
-    } else if (isCloseBrackets(value)) {
-      temp = stack.pushChild(stack.popData())
-    } else {
-      let getData = checkType.getDataType(value, stack);
-      if (getData) temp = stack.pushChild(getData); // 조건문 넣은 이유: getData에서 return 되는 값이 undefined로 반환 되는 경우가 있었다
+class Parser {
+  isOpenBrackets(value) {
+    if (!/['"]/.test(value)) {
+      const openBrackets = ['[', '{'];
+      return openBrackets.indexOf(value) > -1;
     }
   }
-  return temp;
-}
 
-function getTokenizer(data) {
-  const tokenArr = [];
-  let token = '';
-  let isStrComma = false;
+  isCloseBrackets(value) {
+    const closeBrackets = [']', '}'];
+    return closeBrackets.indexOf(value) > -1;
+  }
 
-  for (value of data) {
-    if (isStrComma) {
-      if (value === "'") isStrComma = !isStrComma;
-      token += value;
-    } else if (value === ',') {
-      tokenArr.push(token.trim());
-      token = '';
-    } else if (value === '[' || value === '{') {
-      token += value;
-      tokenArr.push(token.trim());
-      token = '';
-    } else if (value === ']' || value === '}') {
-      tokenArr.push(token.trim());
-      token = '';
-      token += value;
-    } else {
-      if (value === "'") isStrComma = !isStrComma;
-      token += value;
+  stackData(strData) {
+    const checkType = new CheckDataType();
+    const stack = new Stack();
+    let temp = '';
+
+    for (let value of strData) {
+      if (this.isOpenBrackets(value)) {
+        stack.addData(checkType.isArrayOrObjectType(value));
+      } else if (this.isCloseBrackets(value)) {
+        temp = stack.pushChild(stack.popData())
+      } else {
+        let getData = checkType.getDataType(value, stack);
+        if (getData) temp = stack.pushChild(getData);
+      }
+    }
+    return temp;
+  }
+
+  parsingObj(strData) {
+    const error = new CheckError();
+    const isError = error.checkBlockError(strData);
+
+    if (isError) {
+      const tokenData = getTokenizer(strData);
+      const parsingResult = {
+        type: dataType.array,
+        child: this.stackData(tokenData)
+      };
+      return parsingResult;
     }
   }
-  tokenArr.push(token.trim());
-  return tokenArr;
 }
 
-function parsingObj(strData) {
-  const error = new CheckError();
-  const isError = error.checkBlockError(strData);
-
-  if (isError) {
-    const filterData = getTokenizer(strData);
-    const parsingResult = {
-      type: dataType.array,
-      child: stackData(filterData)
-    };
-    return parsingResult;
-  }
-}
 
 const testcase1 = '12345';
 const testcase2 = '[[[]]]';
@@ -260,8 +243,6 @@ const errorcase9 = '["1a"a"a"s""3",[22,23,[11,[112233],112],55],33]';
 // const errorTest8 = parsingObj(errorcase8); // TYPE ERROR => d35
 // const errorTest9 = parsingObj(errorcase9); // COMMA ERROR => "1a"a"a"s""3"
 
-const result = parsingObj(testcase8);
+const parser = new Parser();
+const result = parser.parsingObj(testcase8)
 console.log(JSON.stringify(result, null, 2));
-
-// const testFilter = getTokenizer(testcase8);
-// console.log(JSON.stringify(testFilter, null, 2));
