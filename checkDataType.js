@@ -61,7 +61,7 @@ exports.CheckDataType = class CheckDataType {
     const divideKeyValue = value.split(':');
     const objKey = divideKeyValue[0].trim();
     const objValue = divideKeyValue[1].trim();
-    this.error.checkObjKeyError(objKey)
+    this.error.checkObjKeyError(objKey);
     if (objValue === '[' || objValue === '{') {
       if (objValue === '[') stack.addData(new DataStructure(dataType.array, dataType.arrayObj, objKey));
       else stack.addData(new DataStructure(dataType.object, undefined, objKey));

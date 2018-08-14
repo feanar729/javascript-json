@@ -59,17 +59,14 @@ class Parser {
 
     if (isError) {
       const tokenData = getTokenizer(strData);
-      const parsingResult = {
-        type: 'Array Type',
-        child: this.stackData(tokenData)
-      };
+      const parsingResult = this.stackData(tokenData);
       return parsingResult;
     }
   }
 }
 
 
-const testcase1 = '12345';
+const testcase1 = '[12345]';
 const testcase2 = '[[[]]]';
 const testcase3 = '[[],[],4,[6,5,87],[78]]';
 const testcase4 = '[[1],[[2],3]]';
@@ -83,7 +80,7 @@ const testcase11 = "[1,[2,[{name: '[ 1 ]', this: 1}]]]";
 const testcase12 = "[[[1,{name: 'c r o n           g '}]]]";
 
 const testcase13 = "[1,[[1,{name: 'c r o n           g ', live: 'seoul', firstKey:[1,2,3]}]]]";
-const testcase14 = "[1,[[1,{name: 'c r o n           g ', live: 'seoul', firstKey:{first:1,second:2, third:3} }]]]";
+const testcase14 = "[1,[[1,4,{name: 'c r o n           g ', live: 'seoul', firstKey:{first:1,second:2, third:3} }]]]";
 
 const errorcase1 = '[3213, 2';
 const errorcase2 = ']3213, 2[';
@@ -95,7 +92,6 @@ const errorcase7 = "['1a3',[22,23,[11,[112233],112],55],3d3]";
 const errorcase8 = "['1a3',[22,23,[11,[112233],112],55],d35]";
 const errorcase9 = '["1a"a"a"s""3",[22,23,[11,[112233],112],55],33]';
 
-
 // const errorTest1 = parsingObj(errorcase1); // BLOCK ERROR
 // const errorTest2 = parsingObj(errorcase2); // BLOCK ERROR
 // const errorTest3 = parsingObj(errorcase3); // BLOCK ERROR
@@ -106,8 +102,8 @@ const errorcase9 = '["1a"a"a"s""3",[22,23,[11,[112233],112],55],33]';
 // const errorTest7 = parsingObj(errorcase7); // TYPE ERROR => 3d3
 // const errorTest8 = parsingObj(errorcase8); // TYPE ERROR => d35
 // const errorTest9 = parsingObj(errorcase9); // COMMA ERROR => "1a"a"a"s""3"
-// const errorcase10 = "[[[1,{'name': 'c r o n           g '}]]]"; TYPE ERROR => 'name'
+// const errorcase10 = "[[[1,{'name': 'c r o n           g '}]]]"; // TYPE ERROR => 'name'
 
 const parser = new Parser();
-const result = parser.parsingObj(errorcase10)
+const result = parser.parsingObj(testcase6);
 console.log(JSON.stringify(result, null, 2));
