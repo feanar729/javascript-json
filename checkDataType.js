@@ -28,7 +28,8 @@ exports.CheckDataType = class CheckDataType {
   constructor() {
     this.error = new checkDataError();
   }
-  getDataType(value, stack) {
+
+  getDataStructure(value, stack) {
     if (this.isObjKeyValueType(value)) return this.getObjKeyValType(value, stack);
     if (this.isStringType(value)) return new DataStructure(dataType.string, value.trim());
     if (this.isNumberType(value)) return new DataStructure(dataType.number, value.trim());

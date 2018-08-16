@@ -1,14 +1,18 @@
-exports.expect = (result) => new Expect(result);
+exports.expect = (answer) => new Expect(answer);
+
 class Expect {
   constructor(answer) {
     this.answer = answer;
   }
 
-  toBe(result) {
+  toEqual(checkData) {
+    const answer = JSON.stringify(this.answer, null, 2);
+    const result = JSON.stringify(checkData, null, 2);
+
     const rightComment = 'test 통과';
-    const wrongComment = 'FAIL(targetValue is ' + this.answer + ', expectValue is ' + result + ')';
-    if (result === this.answer) console.log(rightComment);
-    else if (this.answer === undefined) console.log(wrongComment);
-    else console.log(wrongComment);
+    const wrongComment = 'FAIL(targetValue is ' + answer + ', expectValue is ' + result + ')';
+    if (result === answer) return rightComment;
+    else if (checkData === undefined) return wrongComment;
+    else return wrongComment;
   }
 };
