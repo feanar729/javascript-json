@@ -1,84 +1,9 @@
-const checkDataType = require('../checkDataType.js').CheckDataType;
-const tokenizer = require('../tokenizer.js').getTokenizer;
 const expect = require('../expect.js').expect;
 const parser = require('../parser.js').parser;
-
-const checkData = new checkDataType();
 
 function test(comment, testReturn) {
   console.log(comment, "\n", testReturn());
 }
-
-// 기본 자료형 타입 구분
-test("데이터 타입이 Number Type으로 올바르게 나온다", function () {
-  const testcase = '12345';
-  const result = checkData.getDataStructure(testcase).type;
-  return expect('Number Type').toEqual(result);
-});
-
-test("데이터 타입이 String Type으로 올바르게 나온다", function () {
-  const testcase = "'12345'";
-  const result = checkData.getDataStructure(testcase).type;
-  return expect('String Type').toEqual(result);
-});
-
-test("데이터 타입이 Null Type으로 올바르게 나온다", function () {
-  const testcase = 'null';
-  let result = checkData.getDataStructure(testcase).type;
-  return expect('Null Type').toEqual(result);
-});
-
-test("데이터 타입이 Boolean True Type으로 올바르게 나온다", function () {
-  const testcase = 'true';
-  let result = checkData.getDataStructure(testcase).type;
-  return expect('Boolean True').toEqual(result);
-});
-
-test("데이터 타입이 Boolean False Type으로 올바르게 나온다", function () {
-  const testcase = 'false';
-  let result = checkData.getDataStructure(testcase).type;
-  return expect(result).toEqual('Boolean False');
-});
-
-test("데이터 타입이 Array Type으로 올바르게 나온다", function () {
-  const testcase = '[]';
-  let token = tokenizer(testcase);
-  let result = checkData.isArrayOrObjectType(token[0]).type;
-  return expect(result).toEqual('Array Type');
-});
-
-test("데이터 타입이 Object Type으로 올바르게 나온다", function () {
-  const testcase = '{}';
-  let token = tokenizer(testcase);
-  let result = checkData.isArrayOrObjectType(token[0]).type;
-  return expect(result).toEqual('Object Type');
-});
-
-// tokenizer 기능
-test("각각의 문자열들을 token 단위의 쪼개어 배열로 반환되어 올바르게 나온다", function () {
-  const testcase = '[1,2,3,4]';
-  const answer = '[object Array]';
-  const token = tokenizer(testcase);
-  let result = Object.prototype.toString.call(token);
-  return expect(result).toEqual(answer);
-});
-
-test("문자열을 제외한 데이터는 공백은 제거되어 나온다", function () {
-  const testcase = '[1, 2,   3,               4,                   5, 6]';
-  const answer = [
-    '[',
-    '1',
-    '2',
-    '3',
-    '4',
-    '5',
-    '6',
-    ']'
-  ];
-  const token = tokenizer(testcase);
-  return expect(token).toEqual(answer);
-})
-
 
 // parsing 기능
 test("열린 괄호 '['를 인지하고 값이 있을때 true를 반환한다.", function () {
