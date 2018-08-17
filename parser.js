@@ -95,10 +95,10 @@ const errorcase9 = '["1a"a"a"s""3",[22,23,[11,[112233],112],55],33]';
 const errorcase10 = "{name: 'kee', age:12";
 const errorcase11 = "name: 'kee', age:12}";
 const errorcase12 = "[1,[[1,{name: 'c r o n           g ', live: 'seoul', firstKey:[1,2,3]]]]";
-const errorcase13 = "['1a3',[null,false,['11',112,'99'], {a:'str', b  [912,[5656,33]]}, true]";
+const errorcase13 = "['1a3',[null,false,['11',112,'99'], {a:'str', b  [912,[5656,33]]}], true]";
 const errorcase14 = "{name:'str', b 1}";
 
 const parser = new Parser();
 // const result = parser.parsingObj(testcase9);
-const result = parser.parsingObj(errorcase14);
-// console.log(JSON.stringify(result, null, 2));
+const result = parser.parsingObj(errorcase13);
+console.log(JSON.stringify(result, null, 2));
