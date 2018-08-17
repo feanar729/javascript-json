@@ -1,15 +1,17 @@
 const ERROR_MSG = {
-  BLOCK_ERROR: 'BLOCK ERROR',
+  BLOCK_ARRAY_ERROR: '정상적으로 종료되지 않은 배열이 있습니다.',
+  BLOCK_OBJECT_ERROR: '정상적으로 종료되지 않은 객체가 있습니다.',
   TYPE_ERROR: '알 수 없는 타입입니다.',
-  COMMA_ERROR: '올바른 문자열이 아닙니다.'
+  COMMA_ERROR: '올바른 문자열이 아닙니다.',
+  BLOCK_ERROR: '올바르지 않는 괄호'
 };
 
 exports.CheckError = class CheckError {
   checkBlockError(arrWord) {
     let bracketPoint = 0;
     const splitWord = arrWord.split('');
-    const matchOpenCase = ['['];
-    const matchCloseCase = [']'];
+    const matchOpenCase = ['[', '{'];
+    const matchCloseCase = [']', '}'];
 
     splitWord.forEach(matchCase => {
       if (matchOpenCase.indexOf(matchCase) > -1) bracketPoint++;
