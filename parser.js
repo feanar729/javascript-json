@@ -1,6 +1,7 @@
 const getTokenizer = require('./tokenizer.js').getTokenizer;
 const checkDataError = require('./error.js').CheckError;
 const checkDataType = require('./checkDataType').CheckDataType;
+const countDataType = require('./count.js').Count;
 
 class Stack {
   constructor() {
@@ -27,6 +28,7 @@ class Stack {
 class Parser {
   constructor() {
     this.checkType = new checkDataType();
+    this.count = new countDataType();
   }
   isOpenBrackets(value) {
     if (!/['"]/.test(value)) {
@@ -49,14 +51,14 @@ class Parser {
       if (this.isOpenBrackets(value)) {
         getData = this.checkType.isArrayOrObjectType(value)
         stack.addData(getData);
-        this.checkType.countDataType(getData.type);
+        this.count.countDataType(getData.type);
       } else if (this.isCloseBrackets(value)) {
         temp = stack.pushChild(stack.popData())
       } else {
         let getData = this.checkType.getDataStructure(value, stack);
         if (getData) {
           temp = stack.pushChild(getData);
-          this.checkType.countDataType(getData.type);
+          this.count.countDataType(getData.type);
         }
       }
     }
@@ -70,7 +72,7 @@ class Parser {
     if (isError) {
       const tokenData = getTokenizer(strData);
       const parsingResult = this.stackData(tokenData);
-      const getCountType = this.checkType.countDataType();
+      const getCountType = this.count.countDataType();
       console.log(getCountType)
       return parsingResult;
     }
@@ -112,6 +114,6 @@ const errorcase16 = "{name:'str', b 1}";
 const errorcase17 = "[name:'12']";
 
 const parser = new Parser();
-const result = parser.parsingObj(testcase8);
+const result = parser.parsingObj(testcase2);
 // const result = parser.parsingObj(errorcase17);
 console.log(JSON.stringify(result, null, 2));
