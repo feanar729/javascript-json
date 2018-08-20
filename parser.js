@@ -25,6 +25,9 @@ class Stack {
 }
 
 class Parser {
+  constructor() {
+    this.checkType = new checkDataType();
+  }
   isOpenBrackets(value) {
     if (!/['"]/.test(value)) {
       const openBrackets = ['[', '{'];
@@ -38,18 +41,23 @@ class Parser {
   }
 
   stackData(tokenData) {
-    const checkType = new checkDataType();
     const stack = new Stack();
     let temp = '';
+    let getData = '';
 
     for (let value of tokenData) {
       if (this.isOpenBrackets(value)) {
-        stack.addData(checkType.isArrayOrObjectType(value));
+        getData = this.checkType.isArrayOrObjectType(value)
+        stack.addData(getData);
+        this.checkType.countDataType(getData.type);
       } else if (this.isCloseBrackets(value)) {
         temp = stack.pushChild(stack.popData())
       } else {
-        let getData = checkType.getDataStructure(value, stack);
-        if (getData) temp = stack.pushChild(getData);
+        let getData = this.checkType.getDataStructure(value, stack);
+        if (getData) {
+          temp = stack.pushChild(getData);
+          this.checkType.countDataType(getData.type);
+        }
       }
     }
     return temp;
@@ -62,12 +70,12 @@ class Parser {
     if (isError) {
       const tokenData = getTokenizer(strData);
       const parsingResult = this.stackData(tokenData);
+      const getCountType = this.checkType.countDataType();
+      console.log(getCountType)
       return parsingResult;
     }
   }
 }
-exports.parser = new Parser();
-exports.stack = new Stack();
 
 const testcase1 = '[12345]';
 const testcase2 = '[[[]]]';
@@ -104,6 +112,6 @@ const errorcase16 = "{name:'str', b 1}";
 const errorcase17 = "[name:'12']";
 
 const parser = new Parser();
-const result = parser.parsingObj(testcase15);
+const result = parser.parsingObj(testcase8);
 // const result = parser.parsingObj(errorcase17);
 console.log(JSON.stringify(result, null, 2));

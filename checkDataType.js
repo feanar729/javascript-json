@@ -15,6 +15,15 @@ const booleanType = {
   false: 'Boolean False'
 };
 
+let allDataType = {
+  array: 0,
+  object: 0,
+  number: 0,
+  string: 0,
+  null: 0,
+  boolean: 0,
+}
+
 class DataStructure {
   constructor(type, value, key) {
     this.type = type;
@@ -67,9 +76,24 @@ exports.CheckDataType = class CheckDataType {
     if (objValue === '[' || objValue === '{') {
       if (objValue === '[') stack.addData(new DataStructure(dataType.array, dataType.arrayObj, objKey));
       else stack.addData(new DataStructure(dataType.object, undefined, objKey));
+      (objValue === '[') ? this.countDataType(dataType.array): this.countDataType(dataType.object);
     } else {
-      stack.pushChild(new DataStructure(this.checkPrimitiveDataType(objValue), objValue, objKey));
+      let getDataType = this.checkPrimitiveDataType(objValue);
+      stack.pushChild(new DataStructure(getDataType, objValue, objKey));
+      this.countDataType(getDataType);
     }
+  }
+
+  countDataType(getDataType) {
+    if (getDataType === 'Array Type') allDataType.array++;
+    else if (getDataType === 'Object Type') allDataType.object++;
+    else if (getDataType === 'Number Type') allDataType.number++;
+    else if (getDataType === 'String Type') allDataType.string++;
+    else if (getDataType === 'Boolean True') allDataType.boolean++;
+    else if (getDataType === 'Boolean False') allDataType.boolean++;
+    else if (getDataType === 'Null Type') allDataType.null++;
+    const resultCountType = "배열:" + allDataType.array + " 객체: " + allDataType.object + " 숫자: " + allDataType.number + " 문자: " + allDataType.string + " Boolean: " + allDataType.boolean + " Null: " + allDataType.null;
+    return resultCountType;
   }
 
   isBooleanType(value) {

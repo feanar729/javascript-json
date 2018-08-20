@@ -10,44 +10,43 @@ const ERROR_MSG = {
 
 exports.CheckError = class CheckError {
   checkBlockError(arrWord) {
-    let arrBracketPoint = 0;
-    let objBracketPoint = 0;
     const splitWord = arrWord.split('');
-    const requisite = arrBracketPoint === 0 && objBracketPoint === 0;
 
-    arrBracketPoint = this.checkArrBracket(splitWord, arrBracketPoint);
-    objBracketPoint = this.checkObjBracket(splitWord, objBracketPoint);
-    if (requisite) return true;
+    const isAllArrBracket = this.checkArrBracket(splitWord);
+    const isAllObjBracket = this.checkObjBracket(splitWord);
+    if (isAllArrBracket === true && isAllObjBracket === true) return true;
   }
 
-  checkArrBracket(splitWord, arrBracketPoint) {
-    const openArrCase = '[';
-    const closeArrCase = ']';
+  checkArrBracket(splitWord) {
+    const OpenArrCase = '[';
+    const CloseArrCase = ']';
+    let arrBracketPoint = 0;
 
     splitWord.forEach(matchCase => {
-      if (openArrCase === matchCase) arrBracketPoint++;
-      else if (closeArrCase === matchCase) {
+      if (OpenArrCase === matchCase) arrBracketPoint++;
+      else if (CloseArrCase === matchCase) {
         if (arrBracketPoint === 0) throw new Error(ERROR_MSG.BLOCK_ARRAY_ERROR);
         arrBracketPoint--;
       }
     });
     if (arrBracketPoint !== 0) throw new Error(ERROR_MSG.BLOCK_ARRAY_ERROR);
-    return arrBracketPoint;
+    else return true;
   }
 
-  checkObjBracket(splitWord, objBracketPoint) {
-    const openObjCase = '{';
-    const closeObjCase = '}';
+  checkObjBracket(splitWord) {
+    const OpenObjCase = '{';
+    const CloseObjCase = '}';
+    let objBracketPoint = 0;
 
     splitWord.forEach(matchCase => {
-      if (openObjCase === matchCase) objBracketPoint++;
-      else if (closeObjCase === matchCase) {
+      if (OpenObjCase === matchCase) objBracketPoint++;
+      else if (CloseObjCase === matchCase) {
         if (objBracketPoint === 0) throw new Error(ERROR_MSG.BLOCK_OBJECT_ERROR);
         objBracketPoint--;
       }
     });
     if (objBracketPoint !== 0) throw new Error(ERROR_MSG.BLOCK_OBJECT_ERROR);
-    return objBracketPoint;
+    else return true;
   }
 
   checkNumberError(value) {
