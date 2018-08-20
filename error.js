@@ -75,4 +75,8 @@ exports.CheckError = class CheckError {
   checkExpectedObjToken(value) {
     if (value) throw new Error(ERROR_MSG.MISS_COLON_ERROR + "\nTOKEN: " + value);
   }
+
+  checkArrKeyError(lastData, child) {
+    if (lastData.type === 'Array Type' && child.key) throw new Error(ERROR_MSG.ARRAY_KEY_ERROR);
+  }
 }

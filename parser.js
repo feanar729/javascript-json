@@ -19,8 +19,7 @@ class Stack {
   pushChild(child) {
     if (this.stack.length === 0) return child;
     let lastDataStructure = this.stack[this.stack.length - 1];
-    // ls data type 이 arr시 push될 ds.key가 있다면 error처리
-    if (lastDataStructure.type === 'Array Type' && child.key) throw new Error("배열에는 키값을 설정할 수 없습니다.");
+    this.error.checkArrKeyError(lastDataStructure, child);
     lastDataStructure.child.push(child);
   }
 }
@@ -105,6 +104,6 @@ const errorcase16 = "{name:'str', b 1}";
 const errorcase17 = "[name:'12']";
 
 const parser = new Parser();
-// const result = parser.parsingObj(testcase15);
-const result = parser.parsingObj(errorcase13);
+const result = parser.parsingObj(testcase15);
+// const result = parser.parsingObj(errorcase17);
 console.log(JSON.stringify(result, null, 2));
