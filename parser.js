@@ -5,6 +5,7 @@ const checkDataType = require('./checkDataType').CheckDataType;
 class Stack {
   constructor() {
     this.stack = [];
+    this.error = new checkDataError();
   }
 
   addData(data) {
@@ -18,6 +19,8 @@ class Stack {
   pushChild(child) {
     if (this.stack.length === 0) return child;
     let lastDataStructure = this.stack[this.stack.length - 1];
+    // ls data type 이 arr시 push될 ds.key가 있다면 error처리
+    if (lastDataStructure.type === 'Array Type' && child.key) throw new Error("배열에는 키값을 설정할 수 없습니다.");
     lastDataStructure.child.push(child);
   }
 }
@@ -82,6 +85,7 @@ const testcase12 = "[[[1,{name: 'c r o n           g '}]]]";
 const testcase13 = "[1,[[1,{name: 'c r o n           g ', live: 'seoul', firstKey:[1,2,3]}]]]";
 const testcase14 = "[1,[[1,4,{name: 'c r o n           g ', live: 'seoul', firstKey:{first:1,second:2, third:3} }]]]";
 const testcase15 = "{keyName:'name', value:3213}";
+const testcase16 = "[name: '1']";
 
 const errorcase1 = '[3213, 2';
 const errorcase2 = ']3213, 2[';
@@ -95,10 +99,12 @@ const errorcase9 = '["1a"a"a"s""3",[22,23,[11,[112233],112],55],33]';
 const errorcase10 = "{name: 'kee', age:12";
 const errorcase11 = "name: 'kee', age:12}";
 const errorcase12 = "[1,[[1,{name: 'c r o n           g ', live: 'seoul', firstKey:[1,2,3]]]]";
-const errorcase13 = "['1a3',[null,false,['11',112,'99'], {a:'str', b  [912,[5656,33]]}], true]";
-const errorcase14 = "{name:'str', b 1}";
+const errorcase13 = "['1a3',[null,false,['11',112,'99'], {a:'str', b [912,[5656,33]]}], true]";
+const errorcase15 = "{name:'str', 'b': 1}";
+const errorcase16 = "{name:'str', b 1}";
+const errorcase17 = "[name:'12']";
 
 const parser = new Parser();
-// const result = parser.parsingObj(testcase9);
+// const result = parser.parsingObj(testcase15);
 const result = parser.parsingObj(errorcase13);
 console.log(JSON.stringify(result, null, 2));

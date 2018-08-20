@@ -38,6 +38,8 @@ exports.CheckDataType = class CheckDataType {
       else return new DataStructure(booleanType.false, false);
     } else if (value === 'null') {
       return new DataStructure(dataType.null, null)
+    } else {
+      this.error.checkExpectedObjToken(value);
     }
   }
 
@@ -53,7 +55,6 @@ exports.CheckDataType = class CheckDataType {
   }
 
   isArrayOrObjectType(value) {
-    this.error.checkObjKeyError(value);
     if (value === '[') return new DataStructure(dataType.array, dataType.arrayObj)
     else if (value === '{') return new DataStructure(dataType.object);
   }
@@ -67,13 +68,12 @@ exports.CheckDataType = class CheckDataType {
       if (objValue === '[') stack.addData(new DataStructure(dataType.array, dataType.arrayObj, objKey));
       else stack.addData(new DataStructure(dataType.object, undefined, objKey));
     } else {
-      stack.addData(new DataStructure(this.checkPrimitiveDataType(objValue), objValue, objKey));
-      stack.pushChild(stack.popData());
+      stack.pushChild(new DataStructure(this.checkPrimitiveDataType(objValue), objValue, objKey));
     }
   }
 
-  isBooleanType(temp) {
-    return temp === 'true' || temp === 'false';
+  isBooleanType(value) {
+    return value === 'true' || value === 'false';
   }
 
   isStringType(value) {
@@ -81,9 +81,9 @@ exports.CheckDataType = class CheckDataType {
     return /[\'|\"]/.test(value);
   }
 
-  isNumberType(temp) {
-    this.error.checkNumberError(temp);
-    return /^(?=.*[0-9]).*$/m.test(temp);
+  isNumberType(value) {
+    this.error.checkNumberError(value);
+    return /\d/m.test(value);
   }
 
   isObjKeyValueType(value) {
