@@ -1,22 +1,23 @@
-let allDataType = {
-  array: 0,
-  object: 0,
-  number: 0,
-  string: 0,
-  null: 0,
-  boolean: 0,
-}
-
 exports.Count = class Count {
+  constructor() {
+    this.type = {
+      Array_Type: 0,
+      Object_Type: 0,
+      Number_Type: 0,
+      String_Type: 0,
+      Null_Type: 0,
+      boolean: 0,
+    }
+  }
+
   countDataType(getDataType) {
-    if (getDataType === 'Array Type') allDataType.array++;
-    else if (getDataType === 'Object Type') allDataType.object++;
-    else if (getDataType === 'Number Type') allDataType.number++;
-    else if (getDataType === 'String Type') allDataType.string++;
-    else if (getDataType === 'Boolean True') allDataType.boolean++;
-    else if (getDataType === 'Boolean False') allDataType.boolean++;
-    else if (getDataType === 'Null Type') allDataType.null++;
-    const resultCountType = "배열:" + allDataType.array + " 객체: " + allDataType.object + " 숫자: " + allDataType.number + " 문자: " + allDataType.string + " Boolean: " + allDataType.boolean + " Null: " + allDataType.null;
+    for (let key in this.type) {
+      if (getDataType === key) this.type[key]++;
+      else if (getDataType === 'Boolean_True' || getDataType === 'Boolean_False') this.type.boolean++;
+    }
+    const resultCountType = `배열: ${this.type.Array_Type}개` + ` 객체: ${this.type.Object_Type}개` +
+      ` 숫자: ${this.type.Number_Type}개` + ` 문자: ${this.type.String_Type}개` +
+      ` Boolean: ${this.type.boolean}개` + ` Null: ${this.type.Null_Type}개`;
     return resultCountType;
   }
 }

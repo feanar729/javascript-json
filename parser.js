@@ -90,7 +90,7 @@ const testcase8 = "['1a3',[null,false,['11',[112233],{easy : ['hello', {a:'a'}, 
 const testcase9 = "[[[12, {keyName:[1, {firstKey:2, secondKey: 3},'world']}], 12],'2']";
 const testcase10 = "[1,[[2, {inKey:[1, {firstKey:11, secondKey:'tes13@'}, 'test']}], null], true]";
 const testcase11 = "[1,[2,[{name: '[ 1 ]', this: 1}]]]";
-const testcase12 = "[[[1,{name: 'c r o n           g '}]]]";
+const testcase12 = "[[[1,{name: 'c r o n           g '},true]]]";
 const testcase13 = "[1,[[1,{name: 'c r o n           g ', live: 'seoul', firstKey:[1,2,3]}]]]";
 const testcase14 = "[1,[[1,4,{name: 'c r o n           g ', live: 'seoul', firstKey:{first:1,second:2, third:3} }]]]";
 const testcase15 = "{keyName:'name', value:3213}";
@@ -114,6 +114,6 @@ const errorcase16 = "{name:'str', b 1}";
 const errorcase17 = "[name:'12']";
 
 const parser = new Parser();
-const result = parser.parsingObj(testcase2);
+const result = parser.parsingObj(testcase1);
 // const result = parser.parsingObj(errorcase17);
 console.log(JSON.stringify(result, null, 2));

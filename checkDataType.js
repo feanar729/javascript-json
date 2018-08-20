@@ -2,18 +2,18 @@ const checkDataError = require('./error.js').CheckError;
 const countDataType = require('./count.js').Count;
 
 const dataType = {
-  array: 'Array Type',
-  object: 'Object Type',
-  objectKey: 'Object Key',
-  arrayObj: 'Array Object Type',
-  number: 'Number Type',
-  string: 'String Type',
-  null: 'Null Type'
+  array: 'Array_Type',
+  object: 'Object_Type',
+  objectKey: 'Object_Key',
+  arrayObj: 'Array_Object_Type',
+  number: 'Number_Type',
+  string: 'String_Type',
+  null: 'Null_Type'
 };
 
 const booleanType = {
-  true: 'Boolean True',
-  false: 'Boolean False'
+  true: 'Boolean_True',
+  false: 'Boolean_False'
 };
 
 class DataStructure {
