@@ -114,6 +114,6 @@ const errorcase16 = "{name:'str', b 1}";
 const errorcase17 = "[name:'12']";
 
 const parser = new Parser();
-const result = parser.parsingObj(testcase1);
+const result = parser.parsingObj(testcase7);
 // const result = parser.parsingObj(errorcase17);
 console.log(JSON.stringify(result, null, 2));
