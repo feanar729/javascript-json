@@ -6,6 +6,10 @@ const ERROR_MSG = {
   ARRAY_KEY_ERROR: "배열에는 키값을 설정할 수 없습니다.",
   TYPE_ERROR: '알 수 없는 타입입니다.',
   COMMA_ERROR: '올바른 문자열이 아닙니다.'
+}
+
+exports.ERROR_MSG = {
+  ERROR_MSG
 };
 
 exports.CheckError = class CheckError {
@@ -68,7 +72,7 @@ exports.CheckError = class CheckError {
   }
 
   checkObjKeyError(value) {
-    if (/['".&^%$#@!*()]/m.test(value)) throw new Error(ERROR_MSG.KEY_NAME_ERROR + "\nERROR_VALUE: " + value);
+    if (/['".&^%$#@!_+=*()]/m.test(value)) throw new Error(ERROR_MSG.KEY_NAME_ERROR + "\nERROR_VALUE: " + value);
   }
 
   checkExpectedObjToken(value) {

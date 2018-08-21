@@ -1,5 +1,4 @@
 const checkDataError = require('./error.js').CheckError;
-const countDataType = require('./count.js').Count;
 
 const dataType = {
   array: 'Array_Type',
@@ -30,8 +29,8 @@ exports.CheckDataType = class CheckDataType {
     this.error = new checkDataError();
   }
 
-  getDataStructure(value, stack, count) {
-    if (this.isObjKeyValueType(value)) return this.getObjKeyValType(value, stack, count);
+  getDataStructure(value, stack) {
+    if (this.isObjKeyValueType(value)) return this.getObjKeyValType(value, stack);
     if (this.isStringType(value)) return new DataStructure(dataType.string, value.trim());
     if (this.isNumberType(value)) return new DataStructure(dataType.number, value.trim());
     if (this.isBooleanType(value)) {
@@ -68,10 +67,8 @@ exports.CheckDataType = class CheckDataType {
     if (objValue === '[' || objValue === '{') {
       if (objValue === '[') stack.addData(new DataStructure(dataType.array, dataType.arrayObj, objKey));
       else stack.addData(new DataStructure(dataType.object, undefined, objKey));
-      objValue === '[' ? count.countDataType(dataType.array) : count.countDataType(dataType.object);
     } else {
       let getDataType = this.checkPrimitiveDataType(objValue);
-      count.countDataType(getDataType)
       stack.pushChild(new DataStructure(getDataType, objValue, objKey));
     }
   }
