@@ -28,11 +28,10 @@ class DataStructure {
 exports.CheckDataType = class CheckDataType {
   constructor() {
     this.error = new checkDataError();
-    this.count = new countDataType();
   }
 
-  getDataStructure(value, stack) {
-    if (this.isObjKeyValueType(value)) return this.getObjKeyValType(value, stack);
+  getDataStructure(value, stack, count) {
+    if (this.isObjKeyValueType(value)) return this.getObjKeyValType(value, stack, count);
     if (this.isStringType(value)) return new DataStructure(dataType.string, value.trim());
     if (this.isNumberType(value)) return new DataStructure(dataType.number, value.trim());
     if (this.isBooleanType(value)) {
@@ -61,7 +60,7 @@ exports.CheckDataType = class CheckDataType {
     else if (value === '{') return new DataStructure(dataType.object);
   }
 
-  getObjKeyValType(value, stack) {
+  getObjKeyValType(value, stack, count) {
     const divideKeyValue = value.split(':');
     const objKey = divideKeyValue[0].trim();
     const objValue = divideKeyValue[1].trim();
@@ -69,11 +68,11 @@ exports.CheckDataType = class CheckDataType {
     if (objValue === '[' || objValue === '{') {
       if (objValue === '[') stack.addData(new DataStructure(dataType.array, dataType.arrayObj, objKey));
       else stack.addData(new DataStructure(dataType.object, undefined, objKey));
-      (objValue === '[') ? this.count.countDataType(dataType.array): this.count.countDataType(dataType.object);
+      objValue === '[' ? count.countDataType(dataType.array) : count.countDataType(dataType.object);
     } else {
       let getDataType = this.checkPrimitiveDataType(objValue);
+      count.countDataType(getDataType)
       stack.pushChild(new DataStructure(getDataType, objValue, objKey));
-      this.count.countDataType(getDataType);
     }
   }
 

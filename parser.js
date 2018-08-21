@@ -55,7 +55,7 @@ class Parser {
       } else if (this.isCloseBrackets(value)) {
         temp = stack.pushChild(stack.popData())
       } else {
-        let getData = this.checkType.getDataStructure(value, stack);
+        let getData = this.checkType.getDataStructure(value, stack, this.count);
         if (getData) {
           temp = stack.pushChild(getData);
           this.count.countDataType(getData.type);
@@ -73,7 +73,8 @@ class Parser {
       const tokenData = getTokenizer(strData);
       const parsingResult = this.stackData(tokenData);
       const getCountType = this.count.countDataType();
-      console.log(getCountType)
+      console.log(JSON.stringify(parsingResult, null, 2));
+      console.log(getCountType);
       return parsingResult;
     }
   }
@@ -84,7 +85,7 @@ const testcase2 = '[[[]]]';
 const testcase3 = '[[],[],4,[6,5,87],[78]]';
 const testcase4 = '[[1],[[2],3]]';
 const testcase5 = '[11, [22], 33]';
-const testcase6 = '[[[[1,[],2]],[]]]';
+const testcase6 = "[[[[1,[],'2']],[]]]";
 const testcase7 = "['123',[null,false,['11',[112233],112],55, '99'],33, true]";
 const testcase8 = "['1a3',[null,false,['11',[112233],{easy : ['hello', {a:'a'}, 'world']},112],55, '99'],{a:'str', b:[912,[5656,33],{key : 'innervalue', newkeys: [1,2,3,4,5]}]}, true]";
 const testcase9 = "[[[12, {keyName:[1, {firstKey:2, secondKey: 3},'world']}], 12],'2']";
@@ -94,7 +95,6 @@ const testcase12 = "[[[1,{name: 'c r o n           g '},true]]]";
 const testcase13 = "[1,[[1,{name: 'c r o n           g ', live: 'seoul', firstKey:[1,2,3]}]]]";
 const testcase14 = "[1,[[1,4,{name: 'c r o n           g ', live: 'seoul', firstKey:{first:1,second:2, third:3} }]]]";
 const testcase15 = "{keyName:'name', value:3213}";
-const testcase16 = "[name: '1']";
 
 const errorcase1 = '[3213, 2';
 const errorcase2 = ']3213, 2[';
@@ -114,6 +114,5 @@ const errorcase16 = "{name:'str', b 1}";
 const errorcase17 = "[name:'12']";
 
 const parser = new Parser();
-const result = parser.parsingObj(testcase7);
-// const result = parser.parsingObj(errorcase17);
-console.log(JSON.stringify(result, null, 2));
+parser.parsingObj(testcase7);
+// parser.parsingObj(errorcase17);
