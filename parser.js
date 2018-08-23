@@ -79,12 +79,11 @@ class Parser {
 exports.parser = new Parser();
 exports.stack = new Stack();
 
-
-
 const testcase1 = "['1a3',[null,false,['11',[112233],{easy : ['hello', {a:'a'}, 'world']},112],55, '99'],{a:'str', b:[912,[5656,33],{key : 'innervalue', newkeys: [1,2,3,4,5]}]}, true]";
 const testcase2 = "[1,[null,[1,4,{name: 'c r o n           g ', live: 'seoul', firstKey:{first:1,second:2, third:3}, secondKey:[1,false,2] }]]]";
 const testcase3 = "{keyName:'name', value:3213, child:[1,3,true,false,null,['test']]}";
 const testcase4 = "{keyName:'name', value:3213}";
+
 const errorcase1 = "{key: ObjKey, value: true, other: 23}";
 const errorcase2 = "[test:'test']"
 

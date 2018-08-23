@@ -86,6 +86,6 @@ exports.CheckError = class CheckError {
   }
 
   checkArrKeyError(lastData, child) {
-    if (lastData.type === 'array' && child.key) throw new Error(ERROR_MSG.ARRAY_KEY_ERROR);
+    if (lastData.type === 'ARRAY' && child.key) throw new Error(ERROR_MSG.ARRAY_KEY_ERROR);
   }
 }
