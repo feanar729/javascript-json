@@ -71,36 +71,27 @@ class Parser {
     }
   }
 
-  showCountType() {
-    const getCountType = this.count.countDataType();
+  showCalDataType(result) {
+    const getCountType = this.count.printTypeResult(result);
+    return getCountType;
   }
 }
 exports.parser = new Parser();
 exports.stack = new Stack();
 
 
+
 const testcase1 = "['1a3',[null,false,['11',[112233],{easy : ['hello', {a:'a'}, 'world']},112],55, '99'],{a:'str', b:[912,[5656,33],{key : 'innervalue', newkeys: [1,2,3,4,5]}]}, true]";
 const testcase2 = "[1,[null,[1,4,{name: 'c r o n           g ', live: 'seoul', firstKey:{first:1,second:2, third:3}, secondKey:[1,false,2] }]]]";
-const testcase3 = "{keyName:'name', value:3213}";
-
-const errorcase1 = '[3213, 2';
-const errorcase2 = ']3213, 2[';
-const errorcase3 = '[1, 55, 3]]';
-const errorcase4 = '[[[p, []]]';
-const errorcase5 = "['a13',[22,23,[11,[112233],112],55],33d]";
-const errorcase6 = '["1a"3",[22,23,[11,[112233],112],55],33]';
-const errorcase7 = "['1a3',[22,23,[11,[112233],112],55],3d3]";
-const errorcase8 = "['1a3',[22,23,[11,[112233],112],55],d35]";
-const errorcase9 = '["1a"a"a"s""3",[22,23,[11,[112233],112],55],33]';
-const errorcase10 = "{name: 'kee', age:12";
-const errorcase11 = "name: 'kee', age:12}";
-const errorcase12 = "[1,[[1,{name: 'c r o n           g ', live: 'seoul', firstKey:[1,2,3]]]]";
-const errorcase13 = "['1a3',[null,false,['11',112,'99'], {a:'str', b [912,[5656,33]]}], true]";
-const errorcase15 = "{name:'str', 'b': 1}";
-const errorcase16 = "{name:'str', b 1}";
-const errorcase17 = "[name:'12']";
+const testcase3 = "{keyName:'name', value:3213, child:[1,3,true,null,['test']]}";
+const testcase4 = "{keyName:'name', value:3213}";
+const testcase5 = "{key: ObjKey, value: true, other: 23}";
+const testcase6 = "[test:test]"
 
 const parser = new Parser();
-const result = parser.parsingObj(testcase1);
+const result = parser.parsingObj(testcase4);
 // const result2 = parser.parsingObj(errorcase17);
-// console.log(JSON.stringify(result, null, 2));
+console.log(JSON.stringify(result, null, 2));
+
+const showResult = parser.showCalDataType(result);
+console.log(showResult);

@@ -1,18 +1,13 @@
 const checkDataError = require('./error.js').CheckError;
 
 const dataType = {
-  array: 'Array_Type',
-  object: 'Object_Type',
-  objectKey: 'Object_Key',
-  arrayObj: 'Array_Object_Type',
-  number: 'Number_Type',
-  string: 'String_Type',
-  null: 'Null_Type'
-};
-
-const booleanType = {
-  true: 'Boolean_True',
-  false: 'Boolean_False'
+  array: 'array',
+  object: 'object',
+  number: 'number',
+  string: 'string',
+  null: 'null',
+  boolean: 'boolean',
+  arrayObj: 'Array Object'
 };
 
 class DataStructure {
@@ -34,8 +29,8 @@ exports.CheckDataType = class CheckDataType {
     if (this.isStringType(value)) return new DataStructure(dataType.string, value.trim());
     if (this.isNumberType(value)) return new DataStructure(dataType.number, value.trim());
     if (this.isBooleanType(value)) {
-      if (value === 'true') return new DataStructure(booleanType.true, true);
-      else return new DataStructure(booleanType.false, false);
+      if (value === 'true') return new DataStructure(dataType.boolean, true);
+      else return new DataStructure(dataType.boolean, false);
     } else if (value === 'null') {
       return new DataStructure(dataType.null, null)
     } else {
