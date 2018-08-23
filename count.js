@@ -1,12 +1,12 @@
 exports.Count = class Count {
   constructor() {
     this.type = {
-      array: 0,
-      object: 0,
-      number: 0,
-      string: 0,
-      null: 0,
-      boolean: 0
+      ARRAY: 0,
+      OBJECT: 0,
+      NUMBER: 0,
+      STRING: 0,
+      NULL: 0,
+      BOOLEAN: 0
     }
   }
 
@@ -27,16 +27,15 @@ exports.Count = class Count {
 
   printTypeResult(result) {
     this.updateTypeCount(result);
-    let print = '';
+
     for (let key in this.type) {
-      print = `${key}: ${this.type[key]}개`;
+      console.log(`${key} Type: ${this.type[key]}개`);
     }
 
-    const resultCountType =
-      `배열: ${this.type.array}개` + ` 객체: ${this.type.object}개` +
-      ` 숫자: ${this.type.number}개` + ` 문자: ${this.type.string}개` +
-      ` Boolean: ${this.type.boolean}개` + ` Null: ${this.type.null}개`;
-    return resultCountType;
-    // return print;
+    const resultAllType =
+      `배열: ${this.type.ARRAY}개` + ` 객체: ${this.type.OBJECT}개` +
+      ` 숫자: ${this.type.NUMBER}개` + ` 문자: ${this.type.STRING}개` +
+      ` Boolean: ${this.type.BOOLEAN}개` + ` Null: ${this.type.NULL}개`;
+    return resultAllType;
   }
 }

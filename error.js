@@ -5,7 +5,7 @@ const ERROR_MSG = {
   MISS_COLON_ERROR: "':' 이 누락된 객체표현이 있습니다.",
   ARRAY_KEY_ERROR: "배열에는 키값을 설정할 수 없습니다.",
   TYPE_ERROR: '알 수 없는 타입입니다.',
-  COMMA_ERROR: '올바른 문자열이 아닙니다.'
+  QUOTES_ERROR: '올바른 문자열이 아닙니다.'
 }
 
 exports.ERROR_MSG = {
@@ -57,7 +57,7 @@ exports.CheckError = class CheckError {
     if (value.match(/[0-9]\D|\D[0-9]/)) throw new Error(ERROR_MSG.TYPE_ERROR + "\nERROR_VALUE: " + value);
   }
 
-  checkCommaError(value) {
+  checkQuotesError(value) {
     if (value.match(/['"]/m)) {
       let commaPoint = 0;
       const splitToken = value.split('');
@@ -67,7 +67,7 @@ exports.CheckError = class CheckError {
         if (matchCommaCase.indexOf(matchCase) > -1) commaPoint++;
         else if (matchCommaCase.indexOf(matchCase) > -1) commaPoint--;
       });
-      if (commaPoint % 2 !== 0) throw new Error(ERROR_MSG.COMMA_ERROR + "\nERROR_VALUE: " + value);
+      if (commaPoint % 2 !== 0) throw new Error(ERROR_MSG.QUOTES_ERROR + "\nERROR_VALUE: " + value);
     }
   }
 
@@ -75,11 +75,17 @@ exports.CheckError = class CheckError {
     if (/['".&^%$#@!_+=*()]/m.test(value)) throw new Error(ERROR_MSG.KEY_NAME_ERROR + "\nERROR_VALUE: " + value);
   }
 
+  checkObjValueError(value) {
+    const rightTerms = ['true', 'false', 'null', '{', '['];
+    const requirement = rightTerms.indexOf(value) === -1 && !/[\'|\"]/m.test(value) && !/[\d]/m.test(value);
+    if (requirement) throw new Error(ERROR_MSG.QUOTES_ERROR + "\nTOKEN: " + value);
+  }
+
   checkExpectedObjToken(value) {
     if (value) throw new Error(ERROR_MSG.MISS_COLON_ERROR + "\nTOKEN: " + value);
   }
 
   checkArrKeyError(lastData, child) {
-    if (lastData.type === 'Array_Type' && child.key) throw new Error(ERROR_MSG.ARRAY_KEY_ERROR);
+    if (lastData.type === 'array' && child.key) throw new Error(ERROR_MSG.ARRAY_KEY_ERROR);
   }
 }

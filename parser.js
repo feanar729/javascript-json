@@ -83,14 +83,14 @@ exports.stack = new Stack();
 
 const testcase1 = "['1a3',[null,false,['11',[112233],{easy : ['hello', {a:'a'}, 'world']},112],55, '99'],{a:'str', b:[912,[5656,33],{key : 'innervalue', newkeys: [1,2,3,4,5]}]}, true]";
 const testcase2 = "[1,[null,[1,4,{name: 'c r o n           g ', live: 'seoul', firstKey:{first:1,second:2, third:3}, secondKey:[1,false,2] }]]]";
-const testcase3 = "{keyName:'name', value:3213, child:[1,3,true,null,['test']]}";
+const testcase3 = "{keyName:'name', value:3213, child:[1,3,true,false,null,['test']]}";
 const testcase4 = "{keyName:'name', value:3213}";
-const testcase5 = "{key: ObjKey, value: true, other: 23}";
-const testcase6 = "[test:test]"
+const errorcase1 = "{key: ObjKey, value: true, other: 23}";
+const errorcase2 = "[test:'test']"
 
 const parser = new Parser();
-const result = parser.parsingObj(testcase4);
-// const result2 = parser.parsingObj(errorcase17);
+const result = parser.parsingObj(testcase3);
+// const result2 = parser.parsingObj(errorcase1);
 console.log(JSON.stringify(result, null, 2));
 
 const showResult = parser.showCalDataType(result);

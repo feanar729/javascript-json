@@ -1,13 +1,13 @@
 const checkDataError = require('./error.js').CheckError;
 
 const dataType = {
-  array: 'array',
-  object: 'object',
-  number: 'number',
-  string: 'string',
-  null: 'null',
-  boolean: 'boolean',
-  arrayObj: 'Array Object'
+  array: 'ARRAY',
+  object: 'OBJECT',
+  number: 'NUMBER',
+  string: 'STRING',
+  null: 'NULL',
+  boolean: 'BOOLEAN',
+  arrayObj: 'ARRAY OBJECT'
 };
 
 class DataStructure {
@@ -41,12 +41,8 @@ exports.CheckDataType = class CheckDataType {
   checkPrimitiveDataType(value) {
     if (this.isStringType(value)) return dataType.string;
     if (this.isNumberType(value)) return dataType.number;
-    if (this.isBooleanType(value)) {
-      if (value === 'true') return booleanType.true;
-      else return booleanType.false;
-    } else {
-      return dataType.null;
-    }
+    if (this.isBooleanType(value)) return dataType.boolean;
+    if (this.isNullType(value)) return dataType.null;
   }
 
   isArrayOrObjectType(value) {
@@ -54,7 +50,7 @@ exports.CheckDataType = class CheckDataType {
     else if (value === '{') return new DataStructure(dataType.object);
   }
 
-  getObjKeyValType(value, stack, count) {
+  getObjKeyValType(value, stack) {
     const divideKeyValue = value.split(':');
     const objKey = divideKeyValue[0].trim();
     const objValue = divideKeyValue[1].trim();
@@ -64,7 +60,8 @@ exports.CheckDataType = class CheckDataType {
       else stack.addData(new DataStructure(dataType.object, undefined, objKey));
     } else {
       let getDataType = this.checkPrimitiveDataType(objValue);
-      stack.pushChild(new DataStructure(getDataType, objValue, objKey));
+      const value = this.error.checkObjValueError(objValue);
+      stack.pushChild(new DataStructure(getDataType, value, objKey));
     }
   }
 
@@ -73,7 +70,7 @@ exports.CheckDataType = class CheckDataType {
   }
 
   isStringType(value) {
-    this.error.checkCommaError(value);
+    this.error.checkQuotesError(value);
     return /[\'|\"]/.test(value);
   }
 
@@ -84,5 +81,9 @@ exports.CheckDataType = class CheckDataType {
 
   isObjKeyValueType(value) {
     return /[:]/m.test(value);
+  }
+
+  isNullType(value) {
+    return value === 'null';
   }
 }

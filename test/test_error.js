@@ -122,6 +122,20 @@ test("객체 Key 이름이 올바르지 않는다면 Error 출력", function () 
   }
 });
 
+test("객체 value가 따옴표가 없는 문자열 이라면 Error 출력", function () {
+  const errorcase = "{name:str, b: 1}";
+  try {
+    const token = tokenizer(errorcase);
+    const divideKeyValue = token[1].split(':');
+    error.checkObjValueError(divideKeyValue[1]);
+  } catch (errorResult) {
+    const result = message.ERROR_MSG.QUOTES_ERROR;
+    const answer = "올바른 문자열이 아닙니다.";
+    return expect(answer).toEqual(result);
+  }
+});
+
+
 test("배열에 올바르지 않은 Key:Value 값이 들어 있다면 Error 출력", function () {
   const errorcase = "[name:'12']";
   try {
@@ -137,9 +151,9 @@ test("배열에 올바르지 않은 Key:Value 값이 들어 있다면 Error 출�
 test("문자열 기호가 올바르지 않는다면 Error 출력 - CASE_1", function () {
   const errorcase = '["1a"3",[22,23,[11,[112233],112],55],33]';
   try {
-    error.checkCommaError(errorcase);
+    error.checkquotationmarkError(errorcase);
   } catch (errorResult) {
-    const result = message.ERROR_MSG.COMMA_ERROR;
+    const result = message.ERROR_MSG.QUOTES_ERROR;
     const answer = "올바른 문자열이 아닙니다.";
     return expect(answer).toEqual(result);
   }
@@ -148,9 +162,9 @@ test("문자열 기호가 올바르지 않는다면 Error 출력 - CASE_1", func
 test("문자열 기호가 올바르지 않는다면 Error 출력 - CASE_2", function () {
   const errorcase = '["1a"a"a"s""3",[22,23,[11,[112233],112],55],33]';
   try {
-    error.checkCommaError(errorcase);
+    error.checkquotationmarkError(errorcase);
   } catch (errorResult) {
-    const result = message.ERROR_MSG.COMMA_ERROR;
+    const result = message.ERROR_MSG.QUOTES_ERROR;
     const answer = "올바른 문자열이 아닙니다.";
     return expect(answer).toEqual(result);
   }
