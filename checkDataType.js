@@ -60,8 +60,8 @@ exports.CheckDataType = class CheckDataType {
       else stack.addData(new DataStructure(dataType.object, undefined, objKey));
     } else {
       let getDataType = this.checkPrimitiveDataType(objValue);
-      const value = this.error.checkObjValueError(objValue);
-      stack.pushChild(new DataStructure(getDataType, value, objKey));
+      this.error.checkObjValueError(objValue);
+      stack.pushChild(new DataStructure(getDataType, objValue, objKey));
     }
   }
 
