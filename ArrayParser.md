@@ -18,13 +18,17 @@ getTokenizer => stackData => Token된 데이터 구조 구분(Method: getDataStr
 - Stack Class에 위에 getTokenizer의 결과 값을 for-of로 파악해 token값의 타입이 구분된 데이터 구조를 쌓아 넣는다.
 - Stack 과정 
   - token Value가 `[` 시 
+
     <img src ="https://github.com/feanar729/javascript-json/blob/STEP9/image/Stack_1.png" width= 50% height=50% />
 
   - token Value가 `1` 시 
+
     <img src ="https://github.com/feanar729/javascript-json/blob/STEP9/image/Stack_2.png" width= 50% height=50% />
+
     <img src ="https://github.com/feanar729/javascript-json/blob/STEP9/image/Stack_3.png" width= 50% height=50% />
 
   - token Value가 `"park"` 시
+
     <img src ="https://github.com/feanar729/javascript-json/blob/STEP9/image/Stack_4.png" width= 50% height=50% />
 
     <img src ="https://github.com/feanar729/javascript-json/blob/STEP9/image/Stack_5.png" width= 50% height=50% />
@@ -34,24 +38,33 @@ getTokenizer => stackData => Token된 데이터 구조 구분(Method: getDataStr
     <img src ="https://github.com/feanar729/javascript-json/blob/STEP9/image/Stack_6.png" width= 50% height=50% />
 
   - token Value가 `true` 시 
+
     <img src ="https://github.com/feanar729/javascript-json/blob/STEP9/image/Stack_7.png" width= 50% height=50% />
+
     <img src ="https://github.com/feanar729/javascript-json/blob/STEP9/image/Stack_8.png" width= 50% height=50% />
 
   - token Value가 `{` 시 
+
     <img src ="https://github.com/feanar729/javascript-json/blob/STEP9/image/Stack_9.png" width= 50% height=50% />
 
   - token Value가 `name:'p'` 시 
+
     <img src ="https://github.com/feanar729/javascript-json/blob/STEP9/image/Stack_10.png" width= 50% height=50% />
+
     <img src ="https://github.com/feanar729/javascript-json/blob/STEP9/image/Stack_11.png" width= 50% height=50% />
 
   - token Value가 `}` 시 
+
     <img src ="https://github.com/feanar729/javascript-json/blob/STEP9/image/Stack_12.png" width= 50% height=50% />
 
   - token Value가 `]` 시
+
     <img src ="https://github.com/feanar729/javascript-json/blob/STEP9/image/Stack_13.png" width= 50% height=50% />
 
   - token Value가 `]` 시
+
     <img src ="https://github.com/feanar729/javascript-json/blob/STEP9/image/Stack_14.png" width= 50% height=50% />
+
     <img src ="https://github.com/feanar729/javascript-json/blob/STEP9/image/Stack_15.png" width= 50% height=50% />
 
   - 마지막 stack은 비워지고 result에 담겨져 반환 
