@@ -48,19 +48,19 @@ class Parser {
 
   stackData(tokenData) {
     const stack = new Stack();
-    let temp = '';
+    let result = '';
 
     for (let value of tokenData) {
       if (this.isOpenBrackets(value)) {
         stack.addData(this.dataTypeObj.isArrayOrObjectType(value));
       } else if (this.isCloseBrackets(value)) {
-        temp = stack.pushChild(stack.popData());
+        result = stack.pushChild(stack.popData());
       } else {
         let getData = this.dataTypeObj.getDataStructure(value, stack);
-        if (getData) temp = stack.pushChild(getData);
+        if (getData) result = stack.pushChild(getData);
       }
     }
-    return temp;
+    return result;
   }
 
   parsingObj(strData) {
@@ -84,6 +84,7 @@ const testcase1 = "['1a3',[null,false,['11',[112233],{easy : ['hello', {a:'a'}, 
 const testcase2 = "[1,[null,[1,4,{name: 'c r o n           g ', live: 'seoul', firstKey:{first:1,second:2, third:3}, secondKey:[1,false,2] }]]]";
 const testcase3 = "{keyName:'name', value:3213, child:[1,3,true,false,null,['test']]}";
 const testcase4 = "{keyName:'name', value:3213}";
+const testcase = "[1, 'park', [true, {name: 'p'}]]";
 
 const errorcase1 = "{key: ObjKey, value: true, other: 23}";
 const errorcase2 = "[test:'test']"
@@ -94,7 +95,7 @@ const parser = new Parser({
   dataTypeObj: new checkDataType()
 });
 
-const result = parser.parsingObj(testcase1);
+const result = parser.parsingObj(testcase);
 // const result2 = parser.parsingObj(errorcase1);
 console.log(JSON.stringify(result, null, 2));
 
