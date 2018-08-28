@@ -19,7 +19,7 @@ getTokenizer => stackData => Token된 데이터 구조 구분(Method: getDataStr
 - Stack 과정 
   - token Value가 `[` 시 
 
-    ![Stack_1](./../image/Stack_1.png)
+    ![Stack_1](https://github.com/feanar729/javascript-json/blob/STEP9/image/Stack_1.png)
 
   - token Value가 `1` 시 
 
