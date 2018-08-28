@@ -1,4 +1,3 @@
-const checkDataType = require('../checkDataType.js').CheckDataType;
 const tokenizer = require('../tokenizer.js').getTokenizer;
 const checkError = require('../error.js').CheckError;
 const message = require('../error.js').ERROR_MSG;
@@ -110,7 +109,7 @@ test("객체 Key Value를 나눌 ':'이 올바르지 않는다면 Error 출력 -
 });
 
 
-test("객체 Key 이름이 올바르지 않는다면 Error 출력", function () {
+test("객체 Key값에 따옴표가 있다면 Error 출력", function () {
   const errorcase = "{name:'str', 'b': 1}";
   try {
     const token = tokenizer(errorcase);
@@ -134,7 +133,6 @@ test("객체 value가 따옴표가 없는 문자열 이라면 Error 출력", fun
     return expect(answer).toEqual(result);
   }
 });
-
 
 test("배열에 올바르지 않은 Key:Value 값이 들어 있다면 Error 출력", function () {
   const errorcase = "[name:'12']";

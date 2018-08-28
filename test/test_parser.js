@@ -33,28 +33,28 @@ test("닫힌 괄호 '}'를 인지하고 값이 있을때 true를 반환한다.",
 test("Object 데이터 형태를 answer와 같이 올바르게 나온다", function () {
   const testcase = '{value:[3, 2, 1, 3]}';
   const answer = {
-    "type": "Object_Type",
+    "type": "OBJECT",
     "child": [{
-      "type": "Array_Type",
+      "type": "ARRAY",
       "key": "value",
-      "value": "Array_Object_Type",
+      "value": "ARRAY OBJECT",
       "child": [{
-          "type": "Number_Type",
+          "type": "NUMBER",
           "value": "3",
           "child": []
         },
         {
-          "type": "Number_Type",
+          "type": "NUMBER",
           "value": "2",
           "child": []
         },
         {
-          "type": "Number_Type",
+          "type": "NUMBER",
           "value": "1",
           "child": []
         },
         {
-          "type": "Number_Type",
+          "type": "NUMBER",
           "value": "3",
           "child": []
         }
@@ -65,28 +65,28 @@ test("Object 데이터 형태를 answer와 같이 올바르게 나온다", funct
   return expect(result).toEqual(answer);
 });
 
-test("Array 데이터 형태를 answer와 같이 올바르게 나온다", function () {
+test("ARRAY 데이터 형태를 answer와 같이 올바르게 나온다", function () {
   const testcase = '[3, 2, 1, 4]';
   const answer = {
-    "type": "Array_Type",
-    "value": "Array_Object_Type",
+    "type": "ARRAY",
+    "value": "ARRAY OBJECT",
     "child": [{
-        "type": "Number_Type",
+        "type": "NUMBER",
         "value": "3",
         "child": []
       },
       {
-        "type": "Number_Type",
+        "type": "NUMBER",
         "value": "2",
         "child": []
       },
       {
-        "type": "Number_Type",
+        "type": "NUMBER",
         "value": "1",
         "child": []
       },
       {
-        "type": "Number_Type",
+        "type": "NUMBER",
         "value": "4",
         "child": []
       }
@@ -99,11 +99,11 @@ test("Array 데이터 형태를 answer와 같이 올바르게 나온다", functi
 test("2중 중첩시 answer와 같이 올바르게 나온다", function () {
   const testcase = '[[]]';
   const answer = {
-    "type": "Array_Type",
-    "value": "Array_Object_Type",
+    "type": "ARRAY",
+    "value": "ARRAY OBJECT",
     "child": [{
-      "type": "Array_Type",
-      "value": "Array_Object_Type",
+      "type": "ARRAY",
+      "value": "ARRAY OBJECT",
       "child": []
     }]
   }
@@ -114,27 +114,27 @@ test("2중 중첩시 answer와 같이 올바르게 나온다", function () {
 test("다중 배열 중첩시 answer와 같이 올바르게 나온다", function () {
   const testcase = "[[[[[]]],[]]]";
   const answer = {
-    "type": "Array_Type",
-    "value": "Array_Object_Type",
+    "type": "ARRAY",
+    "value": "ARRAY OBJECT",
     "child": [{
-      "type": "Array_Type",
-      "value": "Array_Object_Type",
+      "type": "ARRAY",
+      "value": "ARRAY OBJECT",
       "child": [{
-          "type": "Array_Type",
-          "value": "Array_Object_Type",
+          "type": "ARRAY",
+          "value": "ARRAY OBJECT",
           "child": [{
-            "type": "Array_Type",
-            "value": "Array_Object_Type",
+            "type": "ARRAY",
+            "value": "ARRAY OBJECT",
             "child": [{
-              "type": "Array_Type",
-              "value": "Array_Object_Type",
+              "type": "ARRAY",
+              "value": "ARRAY OBJECT",
               "child": []
             }]
           }]
         },
         {
-          "type": "Array_Type",
-          "value": "Array_Object_Type",
+          "type": "ARRAY",
+          "value": "ARRAY OBJECT",
           "child": []
         }
       ]
@@ -147,15 +147,15 @@ test("다중 배열 중첩시 answer와 같이 올바르게 나온다", function
 test("다중 객체 중첩시 answer와 같이 올바르게 나온다", function () {
   const testcase = "{{{{{}}}}}";
   const answer = {
-    "type": "Object_Type",
+    "type": "OBJECT",
     "child": [{
-      "type": "Object_Type",
+      "type": "OBJECT",
       "child": [{
-        "type": "Object_Type",
+        "type": "OBJECT",
         "child": [{
-          "type": "Object_Type",
+          "type": "OBJECT",
           "child": [{
-            "type": "Object_Type",
+            "type": "OBJECT",
             "child": []
           }]
         }]
@@ -169,53 +169,51 @@ test("다중 객체 중첩시 answer와 같이 올바르게 나온다", function
 test("CASE 1: 다양한 데이터와 객체, 배열의 혼합된 데이터시 answer와 같이 나온다.", function () {
   const testcase = "[1,[[12, {keyName:[1, {firstKey:2, secondKey: 3},'world']}], 12],'2']";
   const answer = {
-    "type": "Array_Type",
-    "value": "Array_Object_Type",
+    "type": "ARRAY",
+    "value": "ARRAY OBJECT",
     "child": [{
-        "type": "Number_Type",
+        "type": "NUMBER",
         "value": "1",
         "child": []
       },
       {
-        "type": "Array_Type",
-        "value": "Array_Object_Type",
+        "type": "ARRAY",
+        "value": "ARRAY OBJECT",
         "child": [{
-            "type": "Array_Type",
-            "value": "Array_Object_Type",
+            "type": "ARRAY",
+            "value": "ARRAY OBJECT",
             "child": [{
-                "type": "Number_Type",
+                "type": "NUMBER",
                 "value": "12",
                 "child": []
               },
               {
-                "type": "Object_Type",
+                "type": "OBJECT",
                 "child": [{
-                  "type": "Array_Type",
+                  "type": "ARRAY",
                   "key": "keyName",
-                  "value": "Array_Object_Type",
+                  "value": "ARRAY OBJECT",
                   "child": [{
-                      "type": "Number_Type",
+                      "type": "NUMBER",
                       "value": "1",
                       "child": []
                     },
                     {
-                      "type": "Object_Type",
+                      "type": "OBJECT",
                       "child": [{
-                          "type": "Number_Type",
+                          "type": "NUMBER",
                           "key": "firstKey",
-                          "value": "2",
                           "child": []
                         },
                         {
-                          "type": "Number_Type",
+                          "type": "NUMBER",
                           "key": "secondKey",
-                          "value": "3",
                           "child": []
                         }
                       ]
                     },
                     {
-                      "type": "String_Type",
+                      "type": "STRING",
                       "value": "'world'",
                       "child": []
                     }
@@ -225,14 +223,14 @@ test("CASE 1: 다양한 데이터와 객체, 배열의 혼합된 데이터시 an
             ]
           },
           {
-            "type": "Number_Type",
+            "type": "NUMBER",
             "value": "12",
             "child": []
           }
         ]
       },
       {
-        "type": "String_Type",
+        "type": "STRING",
         "value": "'2'",
         "child": []
       }
@@ -246,65 +244,64 @@ test("CASE 1: 다양한 데이터와 객체, 배열의 혼합된 데이터시 an
 test("CASE 2: 다양한 데이터와 객체, 배열의 혼합된 데이터시 answer와 같이 나온다.", function () {
   const testcase = "['1a3',[null,false,['11',[112233],{easy : ['hello', {a:'a'}, 'world']},112],55, '99'],{a:'str', b:[912,[5656,33],{key : 'innervalue', newkeys: [1,2,3,4,5]}]}, true]";
   const answer = {
-    "type": "Array_Type",
-    "value": "Array_Object_Type",
+    "type": "ARRAY",
+    "value": "ARRAY OBJECT",
     "child": [{
-        "type": "String_Type",
+        "type": "STRING",
         "value": "'1a3'",
         "child": []
       },
       {
-        "type": "Array_Type",
-        "value": "Array_Object_Type",
+        "type": "ARRAY",
+        "value": "ARRAY OBJECT",
         "child": [{
-            "type": "Null_Type",
+            "type": "NULL",
             "value": null,
             "child": []
           },
           {
-            "type": "Boolean_False",
+            "type": "BOOLEAN",
             "value": false,
             "child": []
           },
           {
-            "type": "Array_Type",
-            "value": "Array_Object_Type",
+            "type": "ARRAY",
+            "value": "ARRAY OBJECT",
             "child": [{
-                "type": "String_Type",
+                "type": "STRING",
                 "value": "'11'",
                 "child": []
               },
               {
-                "type": "Array_Type",
-                "value": "Array_Object_Type",
+                "type": "ARRAY",
+                "value": "ARRAY OBJECT",
                 "child": [{
-                  "type": "Number_Type",
+                  "type": "NUMBER",
                   "value": "112233",
                   "child": []
                 }]
               },
               {
-                "type": "Object_Type",
+                "type": "OBJECT",
                 "child": [{
-                  "type": "Array_Type",
+                  "type": "ARRAY",
                   "key": "easy",
-                  "value": "Array_Object_Type",
+                  "value": "ARRAY OBJECT",
                   "child": [{
-                      "type": "String_Type",
+                      "type": "STRING",
                       "value": "'hello'",
                       "child": []
                     },
                     {
-                      "type": "Object_Type",
+                      "type": "OBJECT",
                       "child": [{
-                        "type": "String_Type",
+                        "type": "STRING",
                         "key": "a",
-                        "value": "'a'",
                         "child": []
                       }]
                     },
                     {
-                      "type": "String_Type",
+                      "type": "STRING",
                       "value": "'world'",
                       "child": []
                     }
@@ -312,90 +309,88 @@ test("CASE 2: 다양한 데이터와 객체, 배열의 혼합된 데이터시 an
                 }]
               },
               {
-                "type": "Number_Type",
+                "type": "NUMBER",
                 "value": "112",
                 "child": []
               }
             ]
           },
           {
-            "type": "Number_Type",
+            "type": "NUMBER",
             "value": "55",
             "child": []
           },
           {
-            "type": "String_Type",
+            "type": "STRING",
             "value": "'99'",
             "child": []
           }
         ]
       },
       {
-        "type": "Object_Type",
+        "type": "OBJECT",
         "child": [{
-            "type": "String_Type",
+            "type": "STRING",
             "key": "a",
-            "value": "'str'",
             "child": []
           },
           {
-            "type": "Array_Type",
+            "type": "ARRAY",
             "key": "b",
-            "value": "Array_Object_Type",
+            "value": "ARRAY OBJECT",
             "child": [{
-                "type": "Number_Type",
+                "type": "NUMBER",
                 "value": "912",
                 "child": []
               },
               {
-                "type": "Array_Type",
-                "value": "Array_Object_Type",
+                "type": "ARRAY",
+                "value": "ARRAY OBJECT",
                 "child": [{
-                    "type": "Number_Type",
+                    "type": "NUMBER",
                     "value": "5656",
                     "child": []
                   },
                   {
-                    "type": "Number_Type",
+                    "type": "NUMBER",
                     "value": "33",
                     "child": []
                   }
                 ]
               },
               {
-                "type": "Object_Type",
+                "type": "OBJECT",
                 "child": [{
-                    "type": "String_Type",
+                    "type": "STRING",
                     "key": "key",
-                    "value": "'innervalue'",
                     "child": []
                   },
                   {
-                    "type": "Array_Type",
+                    "type": "ARRAY",
                     "key": "newkeys",
-                    "value": "Array_Object_Type",
+                    "value": "ARRAY OBJECT",
                     "child": [{
-                        "type": "Number_Type",
+                        "type": "NUMBER",
                         "value": "1",
                         "child": []
                       },
                       {
-                        "type": "Number_Type",
+                        "type": "NUMBER",
                         "value": "2",
                         "child": []
                       },
                       {
-                        "type": "Number_Type",
+                        "type": "NUMBER",
                         "value": "3",
                         "child": []
                       },
                       {
-                        "type": "Number_Type",
+                        "type": "NUMBER",
                         "value": "4",
                         "child": []
                       },
                       {
-                        "type": "Number_Type",
+                        "type": "NUMBER",
                         "value": "5",
                         "child": []
                       }
@@ -408,7 +403,7 @@ test("CASE 2: 다양한 데이터와 객체, 배열의 혼합된 데이터시 an
         ]
       },
       {
-        "type": "Boolean_True",
+        "type": "BOOLEAN",
         "value": true,
         "child": []
       }
@@ -421,59 +416,57 @@ test("CASE 2: 다양한 데이터와 객체, 배열의 혼합된 데이터시 an
 test("공백 문자열이 있어도 answer와 같이 나온다.", function () {
   const testcase = "[1,[[1,{name: 'c r o n           g ', live: 'seoul', firstKey:[1,2,3, true]}]]]";
   const answer = {
-    "type": "Array_Type",
-    "value": "Array_Object_Type",
+    "type": "ARRAY",
+    "value": "ARRAY OBJECT",
     "child": [{
-        "type": "Number_Type",
+        "type": "NUMBER",
         "value": "1",
         "child": []
       },
       {
-        "type": "Array_Type",
-        "value": "Array_Object_Type",
+        "type": "ARRAY",
+        "value": "ARRAY OBJECT",
         "child": [{
-          "type": "Array_Type",
-          "value": "Array_Object_Type",
+          "type": "ARRAY",
+          "value": "ARRAY OBJECT",
           "child": [{
-              "type": "Number_Type",
+              "type": "NUMBER",
               "value": "1",
               "child": []
             },
             {
-              "type": "Object_Type",
+              "type": "OBJECT",
               "child": [{
-                  "type": "String_Type",
+                  "type": "STRING",
                   "key": "name",
-                  "value": "'c r o n           g '",
                   "child": []
                 },
                 {
-                  "type": "String_Type",
+                  "type": "STRING",
                   "key": "live",
-                  "value": "'seoul'",
                   "child": []
                 },
                 {
-                  "type": "Array_Type",
+                  "type": "ARRAY",
                   "key": "firstKey",
-                  "value": "Array_Object_Type",
+                  "value": "ARRAY OBJECT",
                   "child": [{
-                      "type": "Number_Type",
+                      "type": "NUMBER",
                       "value": "1",
                       "child": []
                     },
                     {
-                      "type": "Number_Type",
+                      "type": "NUMBER",
                       "value": "2",
                       "child": []
                     },
                     {
-                      "type": "Number_Type",
+                      "type": "NUMBER",
                       "value": "3",
                       "child": []
                     },
                     {
-                      "type": "Boolean_True",
+                      "type": "BOOLEAN",
                       "value": true,
                       "child": []
                     }
@@ -493,53 +486,51 @@ test("공백 문자열이 있어도 answer와 같이 나온다.", function () {
 test("일부 특부 문자열이 있어도 answer와 같이 나온다.", function () {
   const testcase = "[1,[[2, {inKey:['3213!@#$%^&*()_+', {firstKey:11, secondKey:'tes13@'}, 'test']}], null], true]";
   const answer = {
-    "type": "Array_Type",
-    "value": "Array_Object_Type",
+    "type": "ARRAY",
+    "value": "ARRAY OBJECT",
     "child": [{
-        "type": "Number_Type",
+        "type": "NUMBER",
         "value": "1",
         "child": []
       },
       {
-        "type": "Array_Type",
-        "value": "Array_Object_Type",
+        "type": "ARRAY",
+        "value": "ARRAY OBJECT",
         "child": [{
-            "type": "Array_Type",
-            "value": "Array_Object_Type",
+            "type": "ARRAY",
+            "value": "ARRAY OBJECT",
             "child": [{
-                "type": "Number_Type",
+                "type": "NUMBER",
                 "value": "2",
                 "child": []
               },
               {
-                "type": "Object_Type",
+                "type": "OBJECT",
                 "child": [{
-                  "type": "Array_Type",
+                  "type": "ARRAY",
                   "key": "inKey",
-                  "value": "Array_Object_Type",
+                  "value": "ARRAY OBJECT",
                   "child": [{
-                      "type": "String_Type",
+                      "type": "STRING",
                       "value": "'3213!@#$%^&*()_+'",
                       "child": []
                     },
                     {
-                      "type": "Object_Type",
+                      "type": "OBJECT",
                       "child": [{
-                          "type": "Number_Type",
+                          "type": "NUMBER",
                           "key": "firstKey",
-                          "value": "11",
                           "child": []
                         },
                         {
-                          "type": "String_Type",
+                          "type": "STRING",
                           "key": "secondKey",
-                          "value": "'tes13@'",
                           "child": []
                         }
                       ]
                     },
                     {
-                      "type": "String_Type",
+                      "type": "STRING",
                       "value": "'test'",
                       "child": []
                     }
@@ -549,14 +540,14 @@ test("일부 특부 문자열이 있어도 answer와 같이 나온다.", functio
             ]
           },
           {
-            "type": "Null_Type",
+            "type": "NULL",
             "value": null,
             "child": []
           }
         ]
       },
       {
-        "type": "Boolean_True",
+        "type": "BOOLEAN",
         "value": true,
         "child": []
       }
