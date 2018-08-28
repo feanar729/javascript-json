@@ -57,17 +57,16 @@ getTokenizer => stackData => Token된 데이터 구조 구분(Method: getDataStr
 
     <img src ="https://github.com/feanar729/javascript-json/blob/STEP9/image/Stack_12.png" width= 50% height=50% />
 
-  - token Value가 `]` 시
-
     <img src ="https://github.com/feanar729/javascript-json/blob/STEP9/image/Stack_13.png" width= 50% height=50% />
 
   - token Value가 `]` 시
 
     <img src ="https://github.com/feanar729/javascript-json/blob/STEP9/image/Stack_14.png" width= 50% height=50% />
 
-    <img src ="https://github.com/feanar729/javascript-json/blob/STEP9/image/Stack_15.png" width= 50% height=50% />
+  - token Value가 `]` 시
 
-  - 마지막 stack은 비워지고 result에 담겨져 반환 
+    <img src ="https://github.com/feanar729/javascript-json/blob/STEP9/image/Stack_15.png" width= 50% height=50% />
+    - 마지막 stack은 비워지고 result에 담겨져 반환 
 
 ### 3. 결과물
 - Input
