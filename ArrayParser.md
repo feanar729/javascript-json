@@ -1,4 +1,8 @@
-# Array Parser / Array Parser Test code 문서화
+# Array Parser 프로그램
+
+- 해당 글은 Array Parser의 소스코드의 동작 과정을 설명한다.
+- parser 코드 / test 코드로 분류 되며 2가지의 주요 기능과 동작 과정을 설명한다.
+
 ## Array Parser
 ### 1. 기능
 - 문자열을 통해 파싱된 토큰 단위의 데이터를 타입 판별
