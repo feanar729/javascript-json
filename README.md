@@ -15,8 +15,10 @@ getTokenizer => stackData => Token된 데이터 구조 구분(Method: getDataStr
 
 #### getTokenizer
 - parsing을 진행할 문자열을 차례대로 Token화 진행 및 배열에 넣어 반환
-  > input: ex)'[1, 'park', [true, {name: 'p'}]];
-  > output: '[ '[', '1', '"park"', '[', 'true', '{', 'name:'p', '}', ']', ']' ]'
+  - input:
+    > ex)'[1, 'park', [true, {name: 'p'}]];
+  - output: 
+    > '[ '[', '1', '"park"', '[', 'true', '{', 'name:'p', '}', ']', ']' ]'  
 
 #### stackData
 - Stack Class에 위에 getTokenizer의 결과 값을 for-of로 파악해 token값의 타입이 구분된 데이터 구조를 쌓아 넣는다.
@@ -218,31 +220,51 @@ ex_2) "[{keyName:'name', value:3213, child:[1,true,false,null,['test']]}]"
 - Class 별 Method
   - Parser 클래스
     - parsingObj
-      > 기능 : 문자열 데이터에서 배열, 객체등의 문자열 괄호가 올바르면 `tokenizer & parsing 진행`, 아니면 `ERROR 출력`
-      > 반환 : parsing된 결과 값
+      - 기능 : 
+        > 문자열 데이터에서 배열, 객체등의 문자열 괄호가 올바르면 `tokenizer & parsing 진행`, 아니면 `ERROR 출력`
+      - 반환 : 
+        > parsing된 결과 값
+
     - isOpenBrackets
-      > 기능 : 열린 괄호 ( '[' , '{' )에 해당 되는 지 판별
-      > 반환 : true / false 
+        - 기능 : 
+          > 열린 괄호 ( '[' , '{' )에 해당 되는 지 판별
+        - 반환 : 
+          > true / false 
+
     - isCloseBrackets
-      > 기능 : 닫힌 괄호 ( ']' , '}' )에 해당 되는 지 판별
-      > 반환 : true / false 
+      - 기능 : 
+        > 닫힌 괄호 ( ']' , '}' )에 해당 되는 지 판별
+      - 반환 : 
+        > true / false 
+
     - stackData
-      > 기능 : token단위의 열린 괄호와 데이터 발견시 해당 데이터 타입 판별 및 stack에  닫힌 괄호가 나올 때까지 반복 진행
-      > 반환 : Stack Class에 쌓인 데이터 값
+      - 기능 : 
+        > token단위의 열린 괄호와 데이터 발견시 해당 데이터 타입 판별 및 stack에  닫힌 괄호가 나올 때까지 반복 진행
+      - 반환 : 
+        > Stack Class에 쌓인 데이터 값
+
     - showCalDataType
-      > 기능 : parsing 된 결과 값의 데이터 타입별 개수의 누적통계 결과 출력
-      > 반환 : 누적 된 데이터 타입 결과 내용
+      - 기능 : 
+        > parsing 된 결과 값의 데이터 타입별 개수의 누적통계 결과 출력
+      - 반환 : 
+        > 누적 된 데이터 타입 결과 내용
+
   - Stack 클래스
     - addData
-      > 기능 : stack 배열에 DataStructure를 stack에 push 
+      - 기능 : 
+        > stack 배열에 DataStructure를 stack에 push 
+
     - popData
-      > 기능 : stack에 쌓인 데이터를 pop하게 함
-      > 반환 : pop된 데이터 보유
+      - 기능 : 
+        > stack에 쌓인 데이터를 pop하게 함
+      - 반환 : 
+        > pop된 데이터 보유
+
     - pushChild
-      > 기능 : 
-      > 1) stack에 child가 있다면 마지막 stack에 쌓인 child에 push 
-      > 2) child가 없다면 return 진행
-      > 3) DataStructure 객체에서 'type: ARRAY'의 'key'값 `보유시 error` 출력
+      - 기능 : 
+        > 1) stack에 child가 있다면 마지막 stack에 쌓인 child에 push 
+        > 2) child가 없다면 return 진행
+        > 3) DataStructure 객체에서 'type: ARRAY'의 'key'값 `보유시 error` 출력
 
 #### tokenizer.js
 - 문자열 데이터를 분석하기 위한 데이터 token화 진행 기능 
@@ -257,68 +279,117 @@ ex_2) "[{keyName:'name', value:3213, child:[1,true,false,null,['test']]}]"
   - getDataStructure
     > 기능 : token 값의 데이터 타입을 구분  
     > 반환 : DataStructure의 key / value 반환 => 기본 자료형 token시 : type, value, child / object 타입 token시 getObjKeyValType() Method로 
+
   - checkPrimitiveDataType
-    > 기능 : token의 object value 값에서 기본 자료형의 타입 구분 
+    > 기능 : token의 object value 값에서 기본 자료형의 타입 구분
     > 반환 : 기본 자료형 타입만 ( String, Number, Null, Boolean ) 반환
+
   - isArrayOrObjectType
-    > 기능 : token 데이터 값이 배열 괄호, 객체 괄호 시 각각의 타입 구분 
-    > 반환 : DataStructure - Array, Array Obj / Object Type, child
+    - 기능 :  
+      > token 데이터 값이 배열 괄호, 객체 괄호 시 각각의 타입 구분
+    - 반환 :  
+      > DataStructure - Array, Array Obj / Object Type, child
+
   - getObjKeyValType
-    > 기능 : Key:Value token시 Object 타입의 Key Name과 Value의 데이터 타입(기본자료형, 배열, 객체) 구분, Object DataStructure의 child에 push
-    > 반환 : DataStructure - Object Type, child / Key name / value Type, value, child(배열, 객체시)
+    - 기능 : 
+      > Key:Value token시 Object 타입의 Key Name과 Value의 데이터 타입(기본자료형, 배열, 객체) 구분, Object DataStructure의 child에 push
+    - 반환 : 
+      > DataStructure - Object Type, child / Key name / value Type, value, child(배열, 객체시)
+
   - isBooleanType
-    > 기능 : Token 값 Boolean Type 구분 
-    > 반환 : true / false
+    - 기능 : 
+      > Token 값 Boolean Type 구분
+    - 반환 : 
+      > true / false
+
   - isStringType
-    > 기능 : Token 값 String Type 구분
-    > 반환 : true / false
+    - 기능 : 
+      > Token 값 String Type 구분
+    - 반환 : 
+      > true / false
+
   - isNumberType
-    > 기능 : Token 값 Number Type 구분
-    > 반환 : true / false
+    - 기능 : 
+      > Token 값 Number Type 구분
+    - 반환 : 
+      > true / false
+
   - isObjKeyValueType
-    > 기능 : Token 값 Obj Key:value 구분 ex) name: 'park', first: 1 ....
-    > 반환 : true / false
+    - 기능 : 
+      > Token 값 Obj Key:value 구분 ex) name: 'park', first: 1 ....
+    - 반환 : 
+      > true / false
+
   - isNullType
-    > 기능 : Token 값 Null Type 구분
-    > 반환 : true / false  
+    - 기능 : 
+      > Token 값 Null Type 구분
+    - 반환 : 
+      > true / false  
 
 #### error.js
 - error 조건에 해당 되는 데이터 발견 시 ERROR 메시지 출력
 - Class 별 Method
   - checkBlockError
-    > 기능 : 배열과 객체의 열린 닫힘 괄호가 짝지어져 올바르게 되어 있는지 파악
-    > 반환 : 조건시 각 괄호가 올바르지 않다는 ERROR 메세지 출력 / 올바르면 true 반환
+    - 기능 : 
+      > 배열과 객체의 열린 닫힘 괄호가 짝지어져 올바르게 되어 있는지 파악
+    - 반환 : 
+      > 조건시 각 괄호가 올바르지 않다는 ERROR 메세지 출력 / 올바르면 true 반환
+
     - checkArrBracket => 배열 괄호 파악
     - checkObjBracket => 객체 괄호 파악
+
   - checkNumberError
-    > 기능 : 숫자 타입 외에 다른 문자가 있는지 파악
-    > 반환 : 조건시 알 수 없는 타입 ERROR 메세지 출력 
+    - 기능 : 
+      > 숫자 타입 외에 다른 문자가 있는지 파악
+    - 반환 : 
+      > 조건시 알 수 없는 타입 ERROR 메세지 출력 
+
   - checkQuotesError
-    > 기능 : 문자열 기호가 올바르게 짝지어져 있는지 파악 
-    > 반환 : 조건시 올바르지 않은 문자열 ERROR 메세지 출력
+    - 기능 : 
+      > 문자열 기호가 올바르게 짝지어져 있는지 파악 
+    - 반환 : 
+      > 조건시 올바르지 않은 문자열 ERROR 메세지 출력
+
   - checkObjKeyError
-    > 기능 : key 값에 특수한 기호가 섞여 있는지 파악 
-    > 반환 : 조건시 올바르지 않은 Key Name ERROR 메세지 출력
+    - 기능 : 
+      > key 값에 특수한 기호가 섞여 있는지 파악 
+    - 반환 : 
+      > 조건시 올바르지 않은 Key Name ERROR 메세지 출력
+
   - checkObjValueError
-    > 기능 : Value Token값에 문자열 기호가 없는 value인지 파악  
-    > 반환 : 조건시 올바른 문자열이 아니라는 ERROR 메세지 출력 
+    - 기능 : 
+      > Value Token값에 문자열 기호가 없는 value인지 파악  
+    - 반환 : 
+      > 조건시 올바른 문자열이 아니라는 ERROR 메세지 출력 
+
   - checkExpectedObjToken
-    > 기능 : Token 값이 Object `:`이 없는 잘못된 Token값인지 파악  
-    > 반환 : 조건시 COLON이 없다는 ERROR 메세지 출력
+    - 기능 : 
+      > Token 값이 Object `:`이 없는 잘못된 Token값인지 파악  
+    - 반환 : 
+      > 조건시 COLON이 없다는 ERROR 메세지 출력
+
   - checkArrKeyError
-    > 기능 : Array 타입시 Key 값을 보유했는지 파악 
-    > 반환 : 조건시 배열에는 Key 값을 설정할 수 없다는 ERROR 메세지 출력
+    - 기능 : 
+      > Array 타입시 Key 값을 보유했는지 파악 
+    - 반환 : 
+      > 조건시 배열에는 Key 값을 설정할 수 없다는 ERROR 메세지 출력
 
 #### count.js
 - parsing 된 결과 값의 데이터 타입에 따라 개수 누적 및 통계 출력
 - Class 별 Method
   - updateChildTypeCount
-    > 기능 : parsing된 결과 값의 child에서 Data Type 파악 및 Type별 개수 누적
+    - 기능 : 
+      > parsing된 결과 값의 child에서 Data Type 파악 및 Type별 개수 누적
+
   - updateTypeCount
-    > 기능 : parsing된 결과 값에서 Data Type 파악 및 Type별 개수 누적
+    - 기능 : 
+      > parsing된 결과 값에서 Data Type 파악 및 Type별 개수 누적
+
   - printTypeResult
-    > 기능 : 누적 된 Data Type 별 개수를 출력
-    > 반환 : 누적 된 Data Type 별 수치 문자열 반환
+    - 기능 : 
+      > 누적 된 Data Type 별 개수를 출력
+    - 반환 : 
+      > 누적 된 Data Type 별 수치 문자열 반환
 
 ------------------------------------------------------------------------------
 
