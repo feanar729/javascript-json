@@ -277,12 +277,18 @@ ex_2) "[{keyName:'name', value:3213, child:[1,true,false,null,['test']]}]"
 - tokenizing된 데이터의 타입을 구분 및 DataStructure Class에 기입 반환
 - Class 별 Method
   - getDataStructure
-    > 기능 : token 값의 데이터 타입을 구분  
-    > 반환 : DataStructure의 key / value 반환 => 기본 자료형 token시 : type, value, child / object 타입 token시 getObjKeyValType() Method로 
+    - 기능 : 
+      > token 값의 데이터 타입을 구분  
+    - 반환 : 
+      > DataStructure의 key / value 반환 .
+      > 기본 자료형 token시 : type, value, child .
+      > object 타입 token시 getObjKeyValType() Method로
 
   - checkPrimitiveDataType
-    > 기능 : token의 object value 값에서 기본 자료형의 타입 구분
-    > 반환 : 기본 자료형 타입만 ( String, Number, Null, Boolean ) 반환
+    - 기능 : 
+      > token의 object value 값에서 기본 자료형의 타입 구분
+    - 반환 : 
+      > 기본 자료형 타입만 ( String, Number, Null, Boolean ) 반환
 
   - isArrayOrObjectType
     - 기능 :  
@@ -439,5 +445,5 @@ ex) test_error.js
 - Class Method
   - toEqual
     > 설정된 예상 값과 기능에서 출력된 결과 값이 일치하는지 아닌지 판별하는 기능
-    > result: 결과값
-    > answer: 설정 된 예상 값
+  - result: 결과값
+  - answer: 설정 된 예상 값
